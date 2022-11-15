@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Models\solicitudReintegro;
 use App\Models\solicitudReintegroDetalle;
+use App\Models\prorrateo;
 use Carbon\Carbon;
+use DB;
 
-class solReintegroService 
+class solReintegroService
 {
     private function lastId()
     {
@@ -15,8 +17,13 @@ class solReintegroService
 
     public function listarSolicitudes($request)
     {
+
         $per_page = $request["perPage"];
-        $solicitudes = solicitudReintegro::paginate($per_page);
+
+        $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario','Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','CodEstado')
+        ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
+        ->paginate($per_page);
+
         return $solicitudes;
     }
 
@@ -28,7 +35,7 @@ class solReintegroService
 
     public function createSolicitud($request)
     {
-        
+
         $IdSolicitud = self::lastId();
         $fechaRegistro = Carbon::now('America/Managua');
         $fechaAsientoContable="null";
@@ -49,7 +56,7 @@ class solReintegroService
 
     private function createDetalleSolicitud($items,$IdSolicitud)
     {
-        try 
+        try
         {
             foreach($items as $key => $value)
             {
@@ -59,10 +66,21 @@ class solReintegroService
 
             return ["mensaje"=>"Solicitud Registrada con Exito","Solicitud"=>$IdSolicitud];
 
-        } 
-        catch (\Throwable $th) 
+        }
+        catch (\Throwable $th)
         {
             return ["error"=>$th,"mensaje"=>"Error en el servidor"];
         }
+    }
+
+    public function spProrrateo($concepto,$monto)
+    {
+        return DB::select("EXEC dbo.spReintegroConceptosProrrateo $concepto,$monto");
+    }
+
+    public function listarDetalleSolicitudById($IdSolicitud)
+    {
+        return $detalles = solicitudReintegroDetalle::where('IdSolicitud','=',$IdSolicitud)->get();
+
     }
 }

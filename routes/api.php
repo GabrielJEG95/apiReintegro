@@ -18,8 +18,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('ceco','App\Http\Controllers\cecoController@getCeco');
+Route::post('login', 'App\Http\Controllers\AuthController@login');
+Route::get('login/{user}', 'App\Http\Controllers\AuthController@getUser');
+
+Route::get('concepto','App\Http\Controllers\conceptoReiController@getConcepto');
+
+Route::get('centrocosto','App\Http\Controllers\centroCostoController@getCentroCosto');
+
+Route::get('tipopago','App\Http\Controllers\tipoPagoController@getTipoPago');
 
 Route::get('reintegro','App\Http\Controllers\solReintegroController@getSolReintegro');
 Route::get('reintegro/{IdSolicitud}','App\Http\Controllers\solReintegroController@getSolReintegroById');
 Route::post('reintegro','App\Http\Controllers\solReintegroController@postReintegro');
+Route::get('reintegrodetalle/{IdSolicitud}','App\Http\Controllers\solReintegroController@getDetalleSolicitudById');
+
+Route::get('prorrateo','App\Http\Controllers\prorrateoController@getProrrateo');

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ceco extends Model 
+class conceptoReintegro extends Model
 {
     protected $primaryKey = "IdConcepto";
     public $timestamps = false;
