@@ -75,6 +75,7 @@ class solReintegroController extends Controller
 
     public function deleteLinea($IdSolicitud, Request $request)
     {
+
         $header = $request->header('Authorization');
 
         if($header == null){
@@ -85,7 +86,8 @@ class solReintegroController extends Controller
             return response()->json(["mensaje"=> "invalid","error"=>$validate],401);
         }
 
-
+        $detalles = solReintegroService::deleteLineaDetalle($IdSolicitud,$request);
+        return response()->json($detalles,200);
     }
 
 }

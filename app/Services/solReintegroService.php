@@ -93,6 +93,6 @@ class solReintegroService
         ->where('IdSolicitud','=',$IdSolicitud)
         ->delete();
 
-        return ["mensaje"=>"REgistro Eliminado con Exito","Linea"=>$linea,"Solicitud"=>$IdSolicitud];
+        return ["mensaje"=>"Registro Eliminado con Exito","Linea"=>$linea,"Solicitud"=>$IdSolicitud];
     }
 }
