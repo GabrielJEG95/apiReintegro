@@ -31,5 +31,6 @@ Route::get('reintegro','App\Http\Controllers\solReintegroController@getSolReinte
 Route::get('reintegro/{IdSolicitud}','App\Http\Controllers\solReintegroController@getSolReintegroById');
 Route::post('reintegro','App\Http\Controllers\solReintegroController@postReintegro');
 Route::get('reintegrodetalle/{IdSolicitud}','App\Http\Controllers\solReintegroController@getDetalleSolicitudById');
+Route::delete('reintegro/{IdSolicitud}','App\Http\Controllers\solReintegroController@deleteLinea');
 
 Route::get('prorrateo','App\Http\Controllers\prorrateoController@getProrrateo');
