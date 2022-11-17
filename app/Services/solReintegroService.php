@@ -83,4 +83,16 @@ class solReintegroService
         return $detalles = solicitudReintegroDetalle::where('IdSolicitud','=',$IdSolicitud)->get();
 
     }
+
+    public function deleteLineaDetalle($IdSolicitud, $request) {
+        $linea = $request["Linea"];
+        $centroCosto = $request["centroCosto"];
+
+        $lineaDetalle = solicitudReintegroDetalle::where('CENTRO_COSTO','=',$centroCosto)
+        ->where('Linea','=',$linea)
+        ->where('IdSolicitud','=',$IdSolicitud)
+        ->delete();
+
+        return ["mensaje"=>"REgistro Eliminado con Exito","Linea"=>$linea,"Solicitud"=>$IdSolicitud];
+    }
 }

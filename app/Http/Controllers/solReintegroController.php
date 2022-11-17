@@ -73,4 +73,19 @@ class solReintegroController extends Controller
         return response()->json($detalles,200);
     }
 
+    public function deleteLinea($IdSolicitud, Request $request)
+    {
+        $header = $request->header('Authorization');
+
+        if($header == null){
+            return response()->json('unauthorized',401);
+        }
+        $validate = AppServiceProvider::validateToken($header);
+        if($validate !== 'ok'){
+            return response()->json(["mensaje"=> "invalid","error"=>$validate],401);
+        }
+
+
+    }
+
 }

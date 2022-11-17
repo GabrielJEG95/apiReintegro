@@ -17,11 +17,11 @@ class AuthController extends Controller
     {
         $user = $request["USUARIO"];
         $pass = $request["PASSWORD"];
-       
+
        $login = globalusuario::where('usuario','=',$user)
                                 ->where('password','=',$pass)
-                                ->get();  
-        
+                                ->get();
+
         $acceso = globalusuario::select('fnica.globalusuario.USUARIO','fnica.secUsuarioRole.IDROLE')
         ->join('fnica.secUsuarioRole','fnica.globalusuario.USUARIO','=','fnica.secUsuarioRole.USUARIO')
         ->where('fnica.globalusuario.USUARIO','=',$user)
@@ -39,7 +39,7 @@ class AuthController extends Controller
                 $expire_at = $expire_at->toDateTimeString();
                 $expire_at = strtotime($expire_at);
                 $dominio = "formunica.com";
-        
+
                 $request_data = [
                 'iat' => $date->getTimestamp(),
                 'iss' => $dominio,
@@ -47,7 +47,7 @@ class AuthController extends Controller
                 'exp' => $expire_at,
                 'username' => $request["USUARIO"]
                 ];
-        
+
                 return response()->json([
                     'token'=>JWT::encode($request_data,$secretKey,"HS512"),
                     'user'=>$request["USUARIO"],
@@ -55,16 +55,16 @@ class AuthController extends Controller
                 ],200
             );
        }
-     
+
     }
-    
+
     public function getUser($user){
         $user = globalusuario::where('USUARIO','=',$user)->where('ACTIVO','=',1)->get();
         if(count($user) === 0) {
-            return response()->json(['mensaje'=>'Invalido'],200);    
+            return response()->json(['mensaje'=>'Invalido'],200);
         }
 
-        return response()->json(['mensaje'=>'OK'],200);  
+        return response()->json(['mensaje'=>'OK'],200);
     }
 
 }

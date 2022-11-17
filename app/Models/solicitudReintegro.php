@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class solicitudReintegro extends Model 
+class solicitudReintegro extends Model
 {
     protected $primaryKey = "IdSolicitud";
     public $timestamps = false;
@@ -14,4 +14,5 @@ class solicitudReintegro extends Model
     'Anulada','flgAsientoGenerado','USUARIO1'];
 
     protected $table = 'fnica.reiSolicitudReintegroDePago';
+    public $sortable = ['IdSolicitud'];
 }
