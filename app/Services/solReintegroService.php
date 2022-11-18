@@ -19,9 +19,13 @@ class solReintegroService
     {
 
         $per_page = $request["perPage"];
+        $usuario = $request["user"];
 
-        $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario','Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','CodEstado')
+        $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
+        'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus')
         ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
+        ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+        ->where('fnica.reiSolicitudReintegroDePago.USUARIO','=',$usuario)
         ->paginate($per_page);
 
         return $solicitudes;
@@ -95,4 +99,41 @@ class solReintegroService
 
         return ["mensaje"=>"Registro Eliminado con Exito","Linea"=>$linea,"Solicitud"=>$IdSolicitud];
     }
+
+    private function statusSolicitud($IdSolicitud)
+    {
+        return $detalles = solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)->get();
+    }
+
+    public function updateDetalleSolicitud($IdSolicitud,$request)
+    {
+        try
+        {
+            $items = $request["items"];
+            $sol = self::statusSolicitud($IdSolicitud);
+
+            if($sol[0]["CodEstado"] !== '1')
+            {
+                return ["mensaje"=>"Esta solicitud ya se encuentra en proceso. No se puede actualizar"];
+            }
+
+            foreach ($items as $key => $value)
+            {
+
+                $upt = solicitudReintegroDetalle::where('IdSolicitud','=',$IdSolicitud)
+                ->where('Linea','=',$value["Linea"])
+                ->update(['CENTRO_COSTO'=>$value["CENTRO_COSTO"],'Cuenta_Contable'=>$value["Cuenta_Contable"],
+                'NombreEstablecimiento_Persona'=>$value["NombreEstablecimiento_Persona"],'NumeroFactura'=>$value["NumeroFactura"]]);
+
+
+            }
+
+            return ["mensaje"=>"Se actualizacion los detalles con exito!","Solicitud"=>$IdSolicitud];
+
+        } catch (\Throwable $th) {
+            return ["error"=>strval($th),"mensaje"=>"Error en el servidor"];
+        }
+
+    }
+
 }
