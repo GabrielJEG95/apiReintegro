@@ -35,3 +35,10 @@ Route::delete('reintegro/{IdSolicitud}','App\Http\Controllers\solReintegroContro
 Route::put('reintegro/{IdSolicitud}','App\Http\Controllers\solReintegroController@putDetalleSolicitud');
 
 Route::get('prorrateo','App\Http\Controllers\prorrateoController@getProrrateo');
+
+Route::get('person/{user}','App\Http\Controllers\userController@person');
+Route::put('user/{user}','App\Http\Controllers\userController@updatePassword');
+
+Route::get('status','App\Http\Controllers\statusSolController@getStatus');
+
+Route::get('tipocambio','App\Http\Controllers\tipoCambioController@getTipoCambio');

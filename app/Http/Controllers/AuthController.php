@@ -25,13 +25,13 @@ class AuthController extends Controller
         $acceso = globalusuario::select('fnica.globalusuario.USUARIO','fnica.secUsuarioRole.IDROLE')
         ->join('fnica.secUsuarioRole','fnica.globalusuario.USUARIO','=','fnica.secUsuarioRole.USUARIO')
         ->where('fnica.globalusuario.USUARIO','=',$user)
-        ->where('fnica.secUsuarioRole.IDMODULO','=',8000)
+        ->where('fnica.secUsuarioRole.IDMODULO','=',1500)
         ->get();
 
        if(count($login) === 0) {
             return response()->json(['mensaje'=>'Usuario o Contraseña Incorrecto'],404);
        } else if(count($acceso) === 0){
-        return response()->json(['mensaje'=>'Su usuario no tiene acceso al FormuSpy'],404);
+        return response()->json(['mensaje'=>'Su usuario no tiene acceso al Sitema de Reintegro'],404);
        } else {
                 $secretKey = "00e3d043e7725fa6006e634f79c770c79d30b7f2a4b86afe5188cfe7bf6250b8"; //"formunica_2022*";
                 $date = Carbon::now('America/Managua');
