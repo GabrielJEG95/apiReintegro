@@ -176,4 +176,48 @@ class solReintegroService
 
     }
 
+    public function stadisticSolicitud($user) {
+        if($user === '' || $user === null) {
+            $stadistic = solicitudReintegro::select(
+                array(
+                    DB::raw("case
+                    when CodEstado = '1' then 'Pendiente'
+                    when CodEstado = '2' then 'Aprobado'
+                    when CodEstado = '3' then 'Atendido'
+                    when CodEstado = '4' then 'En Firma'
+                    when CodEstado = '5' then 'Finalizado'
+                    when CodEstado = '6' then 'Rechazado'
+                    else CodEstado
+                    end as title"),
+                    DB::raw("count(*) as total")
+            )
+        )
+        ->groupBy('CodEstado')
+        ->orderBy('CodEstado','asc')
+        ->get();
+        } else {
+            $stadistic = solicitudReintegro::select(
+                array(
+                    DB::raw("case
+                    when CodEstado = '1' then 'Pendiente'
+                    when CodEstado = '2' then 'Aprobado'
+                    when CodEstado = '3' then 'Atendido'
+                    when CodEstado = '4' then 'En Firma'
+                    when CodEstado = '5' then 'Finalizado'
+                    when CodEstado = '6' then 'Rechazado'
+                    else CodEstado
+                    end as title"),
+                    DB::raw("count(*) as total")
+            )
+        )
+        ->groupBy('CodEstado')
+        ->where('USUARIO','=',$user)
+        ->orderBy('CodEstado','asc')
+        ->get();
+        }
+
+
+        return $stadistic;
+    }
+
 }

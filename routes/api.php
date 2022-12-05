@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('login', 'App\Http\Controllers\AuthController@login');
 Route::get('login/{user}', 'App\Http\Controllers\AuthController@getUser');
+Route::get('permisos/{usuario}', 'App\Http\Controllers\permisosController@getPermisos');
 
 Route::get('concepto','App\Http\Controllers\conceptoReiController@getConcepto');
 
@@ -33,6 +34,7 @@ Route::post('reintegro','App\Http\Controllers\solReintegroController@postReinteg
 Route::get('reintegrodetalle/{IdSolicitud}','App\Http\Controllers\solReintegroController@getDetalleSolicitudById');
 Route::delete('reintegro/{IdSolicitud}','App\Http\Controllers\solReintegroController@deleteLinea');
 Route::put('reintegro/{IdSolicitud}','App\Http\Controllers\solReintegroController@putDetalleSolicitud');
+Route::get('estadistica','App\Http\Controllers\solReintegroController@getStadisticSolicitud');
 
 Route::get('prorrateo','App\Http\Controllers\prorrateoController@getProrrateo');
 
@@ -42,3 +44,5 @@ Route::put('user/{user}','App\Http\Controllers\userController@updatePassword');
 Route::get('status','App\Http\Controllers\statusSolController@getStatus');
 
 Route::get('tipocambio','App\Http\Controllers\tipoCambioController@getTipoCambio');
+Route::get('tipocambiodol','App\Http\Controllers\tipoCambioController@getTipoCambiobyDolar');
+Route::get('tipocambiocor','App\Http\Controllers\tipoCambioController@getTipoCambiobyCordoba');

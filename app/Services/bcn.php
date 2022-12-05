@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use SoapClient;
+use App\Models\tipoCambio;
 use DB;
 use Mtownsend\XmlToArray\XmlToArray;
 
@@ -47,5 +49,17 @@ class bcn
 
         //return $TasaMes;
 
+    }
+
+    public function saveTipoCambio($request)
+    {
+        $FECHA = Carbon::now();
+        $RecordDate = Carbon::now();
+        $CreateDate = Carbon::now();
+        $CreatedBy = "gespinoza";
+        $UpdatedBy = "gespinoza";
+        $RowPointer = (String) Str::uuid();
+
+        tipoCambio::create();
     }
 }
