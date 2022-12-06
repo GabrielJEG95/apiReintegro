@@ -29,6 +29,7 @@ class aprobacionPDFController extends Controller
 
         $this->fpdf->AliasNbPages();
         $this->fpdf->AddPage("L");
+        $this->fpdf->Image('../resources/views/Logo.png',10,13,33);
         $this->fpdf->Cell(80);
         $this->fpdf->MultiCell(120,10,"FORMUNICA"."\n"."SOLICITUD DE PAGO",1,'C',false);
 
