@@ -131,13 +131,37 @@ class solReintegroService
     public function deleteLineaDetalle($IdSolicitud, $request) {
         $linea = $request["Linea"];
         $centroCosto = $request["centroCosto"];
+        $sol = self::obtenerDetalleSolicitudId($IdSolicitud,$linea);
+        $solCabecera = self::obtenerSolicitudId($IdSolicitud);
+
+        $montoSol = $solCabecera["Monto"];
+        $montoLinea = $sol[0]["Monto"];
+
+        $nuevoMonto = $montoSol - $montoLinea;
+        //return $nuevoMonto;
 
         $lineaDetalle = solicitudReintegroDetalle::where('CENTRO_COSTO','=',$centroCosto)
         ->where('Linea','=',$linea)
         ->where('IdSolicitud','=',$IdSolicitud)
         ->delete();
 
+        self::updateMontoSolicitud($IdSolicitud,$nuevoMonto);
+
         return ["mensaje"=>"Registro Eliminado con Exito","Linea"=>$linea,"Solicitud"=>$IdSolicitud];
+    }
+
+    private function obtenerDetalleSolicitudId($IdSolicitud,$linea) {
+        //return $IdSolicitud."-".$linea;
+        $detalles = solicitudReintegroDetalle::where('IdSolicitud','=',$IdSolicitud)
+        ->where('Linea','=',$linea)
+        ->get();
+
+        return $detalles;
+    }
+
+    private function updateMontoSolicitud($IdSolicitud,$nuevoMonto) {
+        solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)
+        ->update(['Monto'=>$nuevoMonto]);
     }
 
     private function statusSolicitud($IdSolicitud)
