@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\solicitudReintegro;
 use App\Models\solicitudReintegroDetalle;
 use App\Models\prorrateo;
+use App\Services\statusService;
 use Carbon\Carbon;
 use DB;
 
@@ -71,9 +72,30 @@ class solReintegroService
         return $solicitudes;
     }
 
+    public function listarSolicitudesByRol($IdRol,$perPage)
+    {
+        $estados = statusService::statusByRole($IdRol);
+
+        $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
+        'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+        'fnica.reiSolicitudReintegroDePago.USUARIO')
+        ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
+        ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+        ->whereIn('fnica.reiSolicitudReintegroDePago.CodEstado',$estados)
+        ->paginate($perPage);
+
+        return $solicitudes;
+    }
+
     public function obtenerSolicitudId($IdSolicitud)
     {
-        $solicitud = solicitudReintegro::find($IdSolicitud);
+        $solicitud = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
+        'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+        'fnica.reiSolicitudReintegroDePago.USUARIO')
+        ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
+        ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+        ->where('fnica.reiSolicitudReintegroDePago.IdSolicitud','=',$IdSolicitud)
+        ->paginate(10);
         return $solicitud;
     }
 
@@ -200,6 +222,14 @@ class solReintegroService
 
     }
 
+    public function updateStatusSolicitud($IdSolicitud, $request)
+    {
+        $estado = $request["status"];
+        solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)->update(['CodEstado'=>$estado]);
+
+        return ["mensaje"=>"Se actualizo el estado de la solicitud","Solicitud"=>$IdSolicitud];
+    }
+
     public function stadisticSolicitud($user) {
         if($user === '' || $user === null) {
             $stadistic = solicitudReintegro::select(
@@ -243,5 +273,7 @@ class solReintegroService
 
         return $stadistic;
     }
+
+
 
 }

@@ -14,4 +14,12 @@ class statusSolController extends Controller
 
         return response()->json($status,200);
     }
+
+    public function getStatusByRole(Request $request) {
+        $IdRole = $request["IdRole"];
+
+        $status = statusService::listarEstadosByRole($IdRole);
+
+        return response()->json($status,200);
+    }
 }

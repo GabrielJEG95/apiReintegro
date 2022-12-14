@@ -35,7 +35,7 @@ class AuthController extends Controller
        } else {
                 $secretKey = "00e3d043e7725fa6006e634f79c770c79d30b7f2a4b86afe5188cfe7bf6250b8"; //"formunica_2022*";
                 $date = Carbon::now('America/Managua');
-                $expire_at = $date->addMinutes(480); //modify('+480 minutes')->getTimestamp();
+                $expire_at = $date->addMinutes(880); //modify('+480 minutes')->getTimestamp();
                 $expire_at = $expire_at->toDateTimeString();
                 $expire_at = strtotime($expire_at);
                 $dominio = "formunica.com";

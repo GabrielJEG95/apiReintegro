@@ -29,12 +29,14 @@ Route::get('centrocosto','App\Http\Controllers\centroCostoController@getCentroCo
 Route::get('tipopago','App\Http\Controllers\tipoPagoController@getTipoPago');
 
 Route::get('reintegro','App\Http\Controllers\solReintegroController@getSolReintegro');
+Route::get('reintegrobyrol','App\Http\Controllers\solReintegroController@getSolReintegroByRol');
 Route::get('reintegro/{IdSolicitud}','App\Http\Controllers\solReintegroController@getSolReintegroById');
 Route::post('reintegro','App\Http\Controllers\solReintegroController@postReintegro');
 Route::get('reintegrodetalle/{IdSolicitud}','App\Http\Controllers\solReintegroController@getDetalleSolicitudById');
 Route::delete('reintegro/{IdSolicitud}','App\Http\Controllers\solReintegroController@deleteLinea');
 Route::put('reintegro/{IdSolicitud}','App\Http\Controllers\solReintegroController@putDetalleSolicitud');
 Route::get('estadistica','App\Http\Controllers\solReintegroController@getStadisticSolicitud');
+Route::put('reintegroStatus/{IdSolicitud}','App\Http\Controllers\solReintegroController@putStatusSolicitud');
 
 Route::get('prorrateo','App\Http\Controllers\prorrateoController@getProrrateo');
 
@@ -42,6 +44,7 @@ Route::get('person/{user}','App\Http\Controllers\userController@person');
 Route::put('user/{user}','App\Http\Controllers\userController@updatePassword');
 
 Route::get('status','App\Http\Controllers\statusSolController@getStatus');
+Route::get('statusbyrole','App\Http\Controllers\statusSolController@getStatusByRole');
 
 Route::get('tipocambio','App\Http\Controllers\tipoCambioController@getTipoCambio');
 Route::get('tipocambiodol','App\Http\Controllers\tipoCambioController@getTipoCambiobyDolar');

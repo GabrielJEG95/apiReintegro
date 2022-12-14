@@ -18,4 +18,4 @@ Route::get('/', function () {
 });
 
 
-Route::get('/pdf', 'App\Http\aprobacionPDFController@createPDF');
+Route::get('/pdf', 'App\Http\Controllers\aprobacionPDFController@createPDF');
