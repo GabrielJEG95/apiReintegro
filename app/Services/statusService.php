@@ -46,9 +46,9 @@ class statusService
             PND=Pendiente
             SAC= Sin asiento Generado
         */
-        $role1500 = array("1","2","3","4","5","6","ATE","ANU","FIN","INI","PND","SAC","FIR","EMC","CON" );
+        $role1500 = array("1","2","3","4","5","6","7","ATE","ANU","FIN","INI","PND","SAC","FIR","EMC","CON");
         $role1503 = array("1","2","3","6","ATE","ANU" );
-        $role1502 = array("1","3","4","5","6","ATE","EMC","FIR","INI","FIN" );
+        $role1502 = array("1","3","4","5","6","7","ATE","EMC","FIR","INI","FIN","CON" );
         $role1501 = array("INI","ATE","ANU","1","2","3","6");
         $role = array("0");
 

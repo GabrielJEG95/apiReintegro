@@ -242,13 +242,39 @@ class solReintegroService
         }
 
     }
-
+    //actualiza el estado de la solicitud y genera un asiento en caso de que el estado a cambiar sea el codigo "7" o "CON"
     public function updateStatusSolicitud($IdSolicitud, $request)
     {
+        $solicitud = self::obtenerSolicitudId($IdSolicitud,0);
+        $statusSol = $solicitud[0]["CodEstado"];
         $estado = $request["status"];
-        solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)->update(['CodEstado'=>$estado]);
+        $respuesta = array();
 
-        return ["mensaje"=>"Se actualizo el estado de la solicitud","Solicitud"=>$IdSolicitud];
+        if($estado === "7" || $estado === "CON") {
+            if($statusSol === "3" || $statusSol === "ATE")
+            {
+                solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)->update(['CodEstado'=>$estado]);
+
+                if ($estado === "7" || $estado === "CON")
+                {
+                    $asiento = self::generarAsiento($IdSolicitud);
+                    $respuesta = ["mensaje"=>"Se actualizo el estado de la solicitud","Solicitud"=>$IdSolicitud, "asiento"=>$asiento];
+                } else {
+                    $respuesta = ["mensaje"=>"Se actualizo el estado de la solicitud","Solicitud"=>$IdSolicitud];
+                }
+            } else if($statusSol === "CON") {
+                $respuesta = ["mensaje"=>"No se puede realizar esta acción. Ya se genero un asiento para esta solicitud","Solicitud"=>$IdSolicitud];
+            } else {
+                $respuesta = ["mensaje"=>"No se puede generar asiento de una solicitud que aún no ha sido atentida por administración","Solicitud"=>$IdSolicitud];
+            }
+        } else if($estado === "1" ||  $estado === "INI") {
+            $respuesta = ["mensaje"=>"Esta solicitud ya ha sido cambiada de estado Pendiente/Inicializado, por lo cual no se puede actualizar al estado solicitado","Solicitud"=>$IdSolicitud];
+        } else {
+            solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)->update(['CodEstado'=>$estado]);
+            $respuesta = ["mensaje"=>"Se actualizo el estado de la solicitud","Solicitud"=>$IdSolicitud];
+        }
+
+        return $respuesta;
     }
     // esta funcion esta hecha para los datos que necesita los graficos del dashboard de la patanlla principal
     public function stadisticSolicitud($user) {
@@ -293,6 +319,13 @@ class solReintegroService
 
 
         return $stadistic;
+    }
+
+    private function generarAsiento($IdSolicitud) {
+        $fecha = Carbon::now('America/Managua');
+        $asiento = "@AsientoOutput";
+
+        return DB::select("declare @AsientoOutput nvarchar(10) EXEC fnica.uspreiCreaAsientoASolicitud $IdSolicitud,'$fecha', $asiento OUTPUT select $asiento as asiento");
     }
 
 
