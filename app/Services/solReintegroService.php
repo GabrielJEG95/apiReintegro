@@ -11,11 +11,13 @@ use DB;
 
 class solReintegroService
 {
+    // retorna el ultimo ID insertado
     private function lastId()
     {
         return $lastId = intval(solicitudReintegro::max('IdSolicitud'))+1 ;
     }
 
+    // evalua que funcion ejecutar para retornar una lista de solicitudes
     public function listarSolicitudes($request)
     {
 
@@ -34,7 +36,7 @@ class solReintegroService
 
         return $solicitudes;
     }
-
+    // retorna todas las solicitudes (no toma en cuenta rol, estado, etc)
     public function listarAllSolicitudes($perPage)
     {
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
@@ -46,6 +48,7 @@ class solReintegroService
 
         return $solicitudes;
     }
+    // retorna lista de solicitudes que cada usuario a hecho
     public function listarSolicitudesByUser($usuario,$perPage)
     {
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
@@ -59,6 +62,7 @@ class solReintegroService
         return $solicitudes;
     }
 
+    // retorna lista de solicitudes por filtro de estados (no toma en cuenta rol, solo estado)
     public function listarSolicitudesByStatus($status,$perPage)
     {
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
@@ -72,6 +76,7 @@ class solReintegroService
         return $solicitudes;
     }
 
+    // retornada una lista de solicitudes en dependencia de los estados que cada rol puede ver.
     public function listarSolicitudesByRol($IdRol,$perPage)
     {
         $estados = statusService::statusByRole($IdRol);
@@ -87,18 +92,34 @@ class solReintegroService
         return $solicitudes;
     }
 
-    public function obtenerSolicitudId($IdSolicitud)
+    // filtrar solicitud por ID, retorna un unico registro
+    public function obtenerSolicitudId($IdSolicitud, $IdRole)
     {
-        $solicitud = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
-        'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-        'fnica.reiSolicitudReintegroDePago.USUARIO')
-        ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
-        ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
-        ->where('fnica.reiSolicitudReintegroDePago.IdSolicitud','=',$IdSolicitud)
-        ->paginate(10);
+        if($IdRole !== 0) {
+            $estados = statusService::statusByRole($IdRole);
+
+            $solicitud = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
+            'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+            'fnica.reiSolicitudReintegroDePago.USUARIO')
+            ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
+            ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+            ->where('fnica.reiSolicitudReintegroDePago.IdSolicitud','=',$IdSolicitud)
+            ->whereIn('fnica.reiSolicitudReintegroDePago.CodEstado',$estados)
+            ->paginate(10);
+        } else {
+            $solicitud = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
+            'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+            'fnica.reiSolicitudReintegroDePago.USUARIO')
+            ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
+            ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+            ->where('fnica.reiSolicitudReintegroDePago.IdSolicitud','=',$IdSolicitud)
+            ->paginate(10);
+        }
+
         return $solicitud;
     }
 
+    // crear nueva solicitud (recibe una cabecera y un arreglo de objetos que contiene los detalles de la solicitud)
     public function createSolicitud($request)
     {
 
@@ -119,7 +140,7 @@ class solReintegroService
         $solicitud = solicitudReintegro::create($request->all());
         return self::createDetalleSolicitud($items,$IdSolicitud);
     }
-
+    // inserta los detalles de la solicitud creada
     private function createDetalleSolicitud($items,$IdSolicitud)
     {
         try
@@ -138,18 +159,18 @@ class solReintegroService
             return ["error"=>$th,"mensaje"=>"Error en el servidor"];
         }
     }
-
+    // ejecuta procedimiento almacenado que retorna n lineas en dependencia del concepto
     public function spProrrateo($concepto,$monto)
     {
         return DB::select("EXEC dbo.spReintegroConceptosProrrateo $concepto,$monto");
     }
-
+    // retorna lista de detalles de una solicitud por el ID de la sol
     public function listarDetalleSolicitudById($IdSolicitud)
     {
         return $detalles = solicitudReintegroDetalle::where('IdSolicitud','=',$IdSolicitud)->get();
 
     }
-
+    // eliminar detalle de una solicitud por linea y ID sol
     public function deleteLineaDetalle($IdSolicitud, $request) {
         $linea = $request["Linea"];
         $centroCosto = $request["centroCosto"];
@@ -229,7 +250,7 @@ class solReintegroService
 
         return ["mensaje"=>"Se actualizo el estado de la solicitud","Solicitud"=>$IdSolicitud];
     }
-
+    // esta funcion esta hecha para los datos que necesita los graficos del dashboard de la patanlla principal
     public function stadisticSolicitud($user) {
         if($user === '' || $user === null) {
             $stadistic = solicitudReintegro::select(

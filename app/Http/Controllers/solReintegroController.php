@@ -36,8 +36,9 @@ class solReintegroController extends Controller
         if($validate !== 'ok'){
             return response()->json(["mensaje"=> "invalid","error"=>$validate],401);
         }
+        $IdRole = $request["IdRole"];
 
-        $solicitud = solReintegroService::obtenerSolicitudId($IdSolicitud);
+        $solicitud = solReintegroService::obtenerSolicitudId($IdSolicitud,$IdRole);
         return response()->json($solicitud,200);
     }
 

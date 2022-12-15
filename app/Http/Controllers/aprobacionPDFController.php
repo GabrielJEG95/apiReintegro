@@ -20,7 +20,7 @@ class aprobacionPDFController extends Controller
     {
         $IdSol = $request["IdSolicitud"];
         $header = array('Concepto','Fecha','Documento','Beneficiario','Monto','Centro de Costo','Cuenta');
-        $solicitud = solReintegroService::obtenerSolicitudId($IdSol);
+        $solicitud = solReintegroService::obtenerSolicitudId($IdSol,0);
         $detalles = solReintegroService::listarDetalleSolicitudById($IdSol);
         $sumatoria = 0;
 
@@ -41,27 +41,27 @@ class aprobacionPDFController extends Controller
         $this->fpdf->SetFont('Arial', 'B', 10);
         $this->fpdf->Text(10,45,"Unidad Solicitante: ");
         $this->fpdf->SetFont('Arial', '', 10);
-        $this->fpdf->Text(60,45,$solicitud["CENTRO_COSTO"]);
+        $this->fpdf->Text(60,45,$solicitud[0]["CENTRO_COSTO"]);
 
         $this->fpdf->SetFont('Arial', 'B', 10);
         $this->fpdf->Text(10,50,"A Favor de: ");
         $this->fpdf->SetFont('Arial', '', 10);
-        $this->fpdf->Text(60,50,$solicitud["Beneficiario"]);
+        $this->fpdf->Text(60,50,utf8_decode($solicitud[0]["Beneficiario"]));
 
         $this->fpdf->SetFont('Arial', 'B', 10);
         $this->fpdf->Text(10,55,"Por el valor de: ");
         $this->fpdf->SetFont('Arial', '', 10);
-        $this->fpdf->Text(60,55,\number_format($solicitud["Monto"])." (Cordobas C$)");
+        $this->fpdf->Text(60,55,\number_format($solicitud[0]["Monto"])." (Cordobas C$)");
 
         $this->fpdf->SetFont('Arial', 'B', 10);
         $this->fpdf->Text(10,60,"En Concepto de: ");
         $this->fpdf->SetFont('Arial', '', 10);
-        $this->fpdf->Text(60,60,$solicitud["Concepto"]);
+        $this->fpdf->Text(60,60, \utf8_decode($solicitud[0]["Concepto"]));
 
         $this->fpdf->SetFont('Arial', 'B', 10);
         $this->fpdf->Text(150,40,\utf8_decode("Fecha de Emisión: "));
         $this->fpdf->SetFont('Arial', '', 10);
-        $this->fpdf->Text(190,40,$solicitud["FechaSolicitud"]);
+        $this->fpdf->Text(190,40,$solicitud[0]["FechaSolicitud"]);
 
         $this->fpdf->Ln();
         $this->fpdf->Ln();
