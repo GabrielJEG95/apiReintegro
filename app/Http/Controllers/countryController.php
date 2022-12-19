@@ -26,4 +26,10 @@ class countryController extends Controller
 
         return response()->json($country,200);
     }
+
+    public function postRelationCountryUser(Request $request) {
+        $country = countryService::createRelationCountryUser($request);
+
+        return response()->json($country,200);
+    }
 }
