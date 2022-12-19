@@ -49,3 +49,6 @@ Route::get('statusbyrole','App\Http\Controllers\statusSolController@getStatusByR
 Route::get('tipocambio','App\Http\Controllers\tipoCambioController@getTipoCambio');
 Route::get('tipocambiodol','App\Http\Controllers\tipoCambioController@getTipoCambiobyDolar');
 Route::get('tipocambiocor','App\Http\Controllers\tipoCambioController@getTipoCambiobyCordoba');
+
+Route::get('country','App\Http\Controllers\countryController@getCountry');
+Route::get('countrybyuser','App\Http\Controllers\countryController@getCountryByUser');

@@ -274,6 +274,10 @@ class solReintegroService
             } else {
                 $respuesta = ["mensaje"=>"No se puede finalizar una solicitud que no se le ha generado asiento","Solicitud"=>$IdSolicitud];
             }
+        } else if($estado === "3" || $estado === "ATE") {
+            if($statusSol === "6" || $statusSol === "ANU") {
+                $respuesta = ["mensaje"=>"No se puede cambiar de estado una solicitud que ha sido rechazada/anulada","Solicitud"=>$IdSolicitud];
+            }
         } else {
             solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)->update(['CodEstado'=>$estado]);
             $respuesta = ["mensaje"=>"Se actualizo el estado de la solicitud","Solicitud"=>$IdSolicitud];
@@ -293,6 +297,7 @@ class solReintegroService
                     when CodEstado = '4' then 'En Firma'
                     when CodEstado = '5' then 'Finalizado'
                     when CodEstado = '6' then 'Rechazado'
+                    when CodEstado = '7' then 'Asiento Generado'
                     else CodEstado
                     end as title"),
                     DB::raw("count(*) as total")

@@ -10,7 +10,7 @@ class solicitudReintegro extends Model
     protected $primaryKey = "IdSolicitud";
     public $timestamps = false;
     protected $fillable = ['IdSolicitud','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','CodEstado',
-    'TipoPago','Beneficiario','Concepto','CUENTA_BANCO','USUARIO','FECHAREGISTRO','FechaAsientoContable','NumCheque','Asiento','FECHAUPDATE','',
+    'TipoPago','Beneficiario','Concepto','CUENTA_BANCO','USUARIO','FECHAREGISTRO','FechaAsientoContable','NumCheque','Asiento','FECHAUPDATE','Pais',
     'Anulada','flgAsientoGenerado','USUARIO1'];
 
     protected $table = 'fnica.reiSolicitudReintegroDePago';
