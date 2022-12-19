@@ -250,25 +250,30 @@ class solReintegroService
         $estado = $request["status"];
         $respuesta = array();
 
-        if($estado === "7" || $estado === "CON") {
-            if($statusSol === "3" || $statusSol === "ATE")
+        if($estado === "7" || $estado === "CON") { // 7 = generar asiento.  CON = asiento generado. estado que envia el usuario
+            if($statusSol === "3" || $statusSol === "ATE") // Estado en que se encuentra actualmente la solicitud. 3 = atendido. ATE = atentida
             {
                 solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)->update(['CodEstado'=>$estado]);
 
-                if ($estado === "7" || $estado === "CON")
-                {
-                    $asiento = self::generarAsiento($IdSolicitud);
-                    $respuesta = ["mensaje"=>"Se actualizo el estado de la solicitud","Solicitud"=>$IdSolicitud, "asiento"=>$asiento];
-                } else {
-                    $respuesta = ["mensaje"=>"Se actualizo el estado de la solicitud","Solicitud"=>$IdSolicitud];
-                }
-            } else if($statusSol === "CON") {
+                $asiento = self::generarAsiento($IdSolicitud);
+                $respuesta = ["mensaje"=>"Se actualizo el estado de la solicitud","Solicitud"=>$IdSolicitud, "asiento"=>$asiento];
+
+            } else if($statusSol === "CON" || $statusSol === "FIR" || $statusSol === "4") {
                 $respuesta = ["mensaje"=>"No se puede realizar esta acción. Ya se genero un asiento para esta solicitud","Solicitud"=>$IdSolicitud];
-            } else {
+            } else if ($statusSol === "INI"){
                 $respuesta = ["mensaje"=>"No se puede generar asiento de una solicitud que aún no ha sido atentida por administración","Solicitud"=>$IdSolicitud];
+            } else if($statusSol === "6" || $statusSol === "ANU") {
+                $respuesta = ["mensaje"=>"No se puede generar asiento de una solicitud que ha sido rechazada/anulada","Solicitud"=>$IdSolicitud];
             }
         } else if($estado === "1" ||  $estado === "INI") {
             $respuesta = ["mensaje"=>"Esta solicitud ya ha sido cambiada de estado Pendiente/Inicializado, por lo cual no se puede actualizar al estado solicitado","Solicitud"=>$IdSolicitud];
+        } else if ($estado === "FIN" || $estado === "5") {
+            if($statusSol === "CON" || $statusSol === "7") {
+                solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)->update(['CodEstado'=>$estado]);
+                $respuesta = ["mensaje"=>"Se actualizo el estado de la solicitud a finalizado","Solicitud"=>$IdSolicitud];
+            } else {
+                $respuesta = ["mensaje"=>"No se puede finalizar una solicitud que no se le ha generado asiento","Solicitud"=>$IdSolicitud];
+            }
         } else {
             solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)->update(['CodEstado'=>$estado]);
             $respuesta = ["mensaje"=>"Se actualizo el estado de la solicitud","Solicitud"=>$IdSolicitud];
