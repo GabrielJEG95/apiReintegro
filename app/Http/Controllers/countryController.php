@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\countryService;
+use App\Helpers\response;
 
 class countryController extends Controller
 {
@@ -31,5 +32,18 @@ class countryController extends Controller
         $country = countryService::createRelationCountryUser($request);
 
         return response()->json($country,200);
+    }
+
+    public function deleteRelacionCountryUser($Id,Request $request) {
+        try {
+
+            $relacion = countryService::anularPaisUsuario($Id, $request);
+            return response()->json($relacion,200);
+
+        } catch (\Exception $ex) {
+            $response = response::apiResponse($ex);
+            return response()->json($response["response"],$response["statusCode"]);
+        }
+
     }
 }

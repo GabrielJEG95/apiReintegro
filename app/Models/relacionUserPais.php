@@ -9,6 +9,6 @@ class relacionUserPais extends Model
 {
     protected $primaryKey = "IdRelacion";
     public $timestamps = false;
-    protected $fillable = ['Pais','usuarioRegistro','Users'];
+    protected $fillable = ['IdPais','usuarioRegistro','Users'];
     protected $table = 'relacionUserPais';
 }

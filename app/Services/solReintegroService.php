@@ -24,12 +24,13 @@ class solReintegroService
         $per_page = $request["perPage"];
         $usuario = $request["user"];
         $estado = $request["status"];
+        $paises = $request["Pais"];
         $solicitudes = '';
 
         if($usuario !== null) {
-            $solicitudes = self::listarSolicitudesByUser($usuario,$per_page);
+            $solicitudes = self::listarSolicitudesByUser($usuario,$per_page,$paises);
         } else if($estado){
-            $solicitudes = self::listarSolicitudesByStatus($estado,$per_page);
+            $solicitudes = self::listarSolicitudesByStatus($estado,$per_page,$paises);
         } else {
             $solicitudes = self::listarAllSolicitudes($per_page);
         }
@@ -49,37 +50,45 @@ class solReintegroService
         return $solicitudes;
     }
     // retorna lista de solicitudes que cada usuario a hecho
-    public function listarSolicitudesByUser($usuario,$perPage)
+    public function listarSolicitudesByUser($usuario,$perPage,$paises)
     {
+        $country = explode(",",$paises);
+
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
         'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
         'fnica.reiSolicitudReintegroDePago.USUARIO')
         ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
         ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
         ->where('fnica.reiSolicitudReintegroDePago.USUARIO','=',$usuario)
+        //->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
         ->paginate($perPage);
 
         return $solicitudes;
     }
 
     // retorna lista de solicitudes por filtro de estados (no toma en cuenta rol, solo estado)
-    public function listarSolicitudesByStatus($status,$perPage)
+    public function listarSolicitudesByStatus($status,$perPage,$paises)
     {
+        $country = explode(",",$paises);
+
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
         'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
         'fnica.reiSolicitudReintegroDePago.USUARIO')
         ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
         ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
         ->where('fnica.reiSolicitudReintegroDePago.CodEstado','=',$status)
+        ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
         ->paginate($perPage);
 
         return $solicitudes;
     }
 
     // retornada una lista de solicitudes en dependencia de los estados que cada rol puede ver.
-    public function listarSolicitudesByRol($IdRol,$perPage)
+    public function listarSolicitudesByRol($IdRol,$perPage,$paises)
     {
         $estados = statusService::statusByRole($IdRol);
+        $country = explode(",",$paises);
+
 
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
         'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
@@ -87,14 +96,17 @@ class solReintegroService
         ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
         ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
         ->whereIn('fnica.reiSolicitudReintegroDePago.CodEstado',$estados)
+        ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
         ->paginate($perPage);
 
         return $solicitudes;
     }
 
     // filtrar solicitud por ID, retorna un unico registro
-    public function obtenerSolicitudId($IdSolicitud, $IdRole)
+    public function obtenerSolicitudId($IdSolicitud, $IdRole,$paises)
     {
+        $country = explode(",",$paises);
+
         if($IdRole !== 0) {
             $estados = statusService::statusByRole($IdRole);
 
@@ -105,6 +117,7 @@ class solReintegroService
             ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
             ->where('fnica.reiSolicitudReintegroDePago.IdSolicitud','=',$IdSolicitud)
             ->whereIn('fnica.reiSolicitudReintegroDePago.CodEstado',$estados)
+            ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
             ->paginate(10);
         } else {
             $solicitud = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
@@ -113,6 +126,7 @@ class solReintegroService
             ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
             ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
             ->where('fnica.reiSolicitudReintegroDePago.IdSolicitud','=',$IdSolicitud)
+            ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
             ->paginate(10);
         }
 
@@ -286,7 +300,10 @@ class solReintegroService
         return $respuesta;
     }
     // esta funcion esta hecha para los datos que necesita los graficos del dashboard de la patanlla principal
-    public function stadisticSolicitud($user) {
+    public function stadisticSolicitud($user,$paises) {
+
+        $country = explode(",",$paises);
+
         if($user === '' || $user === null) {
             $stadistic = solicitudReintegro::select(
                 array(
@@ -304,6 +321,7 @@ class solReintegroService
             )
         )
         ->groupBy('CodEstado')
+        ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
         ->orderBy('CodEstado','asc')
         ->get();
         } else {
@@ -323,6 +341,7 @@ class solReintegroService
         )
         ->groupBy('CodEstado')
         ->where('USUARIO','=',$user)
+        ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
         ->orderBy('CodEstado','asc')
         ->get();
         }

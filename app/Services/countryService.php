@@ -21,9 +21,10 @@ class countryService
     public function listarPaisesByUser($user)
     {
         $country = DB::table('Paises')
-        ->select('relacionUserPais.IdPais','Pais','relacionUserPais.Users')
+        ->select('IdRelacion','relacionUserPais.IdPais','Pais','relacionUserPais.Users')
         ->join('relacionUserPais','Paises.IdPais','=','relacionUserPais.IdPais')
         ->where('relacionUserPais.Users','=',$user)
+        ->where('relacionUserPais.status','=',1)
         ->get();
 
         return $country;
@@ -31,7 +32,7 @@ class countryService
 
     public function createCountry($request)
     {
-        DB::table('relacionUserPais')->create($request->all());
+        paises::create($request->all());
 
         return ["mensaje"=>"Registro creado con exito"];
     }
@@ -45,6 +46,16 @@ class countryService
         relacionUserPais::create($request->all());
 
         return ["mensaje"=>"Registro creado con exito"];
+    }
+
+    public function anularPaisUsuario($IdRelacion,$request) {
+        $fecha = Carbon::now('America/Managua');
+        $user = $request["user"];
+
+        $relacion = relacionUserPais::where('IdRelacion','=',$IdRelacion)
+        ->update(['status'=>0,"fechaAnulacion"=>$fecha,"UsuarioAnulacion"=>$user]);
+
+        return ["mensaje"=>"Registro anulado con exito"];
     }
 
     private function validateData($request)

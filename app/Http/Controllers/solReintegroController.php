@@ -37,8 +37,9 @@ class solReintegroController extends Controller
             return response()->json(["mensaje"=> "invalid","error"=>$validate],401);
         }
         $IdRole = $request["IdRole"];
+        $paises = $request["Pais"];
 
-        $solicitud = solReintegroService::obtenerSolicitudId($IdSolicitud,$IdRole);
+        $solicitud = solReintegroService::obtenerSolicitudId($IdSolicitud,$IdRole,$paises);
         return response()->json($solicitud,200);
     }
 
@@ -53,9 +54,12 @@ class solReintegroController extends Controller
         if($validate !== 'ok'){
             return response()->json(["mensaje"=> "invalid","error"=>$validate],401);
         }
+
         $IdRole = $request["IdRole"];
         $perPage = $request["perPage"];
-        $solicitudes = solReintegroService::listarSolicitudesByRol($IdRole,$perPage);
+        $paises = $request["Pais"];
+
+        $solicitudes = solReintegroService::listarSolicitudesByRol($IdRole,$perPage,$paises);
         return \response()->json($solicitudes,200);
     }
 
@@ -138,7 +142,9 @@ class solReintegroController extends Controller
         }
 
         $user = $request["user"];
-        $stadistic = solReintegroService::stadisticSolicitud($user);
+        $paises = $request["Pais"];
+
+        $stadistic = solReintegroService::stadisticSolicitud($user,$paises);
 
         return response()->json($stadistic,200);
     }

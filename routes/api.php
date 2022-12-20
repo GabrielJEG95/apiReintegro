@@ -51,4 +51,7 @@ Route::get('tipocambiodol','App\Http\Controllers\tipoCambioController@getTipoCam
 Route::get('tipocambiocor','App\Http\Controllers\tipoCambioController@getTipoCambiobyCordoba');
 
 Route::get('country','App\Http\Controllers\countryController@getCountry');
+Route::post('country','App\Http\Controllers\countryController@postCountry');
 Route::get('countrybyuser','App\Http\Controllers\countryController@getCountryByUser');
+Route::post('countrybyuser','App\Http\Controllers\countryController@postRelationCountryUser');
+Route::delete('countrybyuser/{Id}','App\Http\Controllers\countryController@deleteRelacionCountryUser');
