@@ -55,3 +55,8 @@ Route::post('country','App\Http\Controllers\countryController@postCountry');
 Route::get('countrybyuser','App\Http\Controllers\countryController@getCountryByUser');
 Route::post('countrybyuser','App\Http\Controllers\countryController@postRelationCountryUser');
 Route::delete('countrybyuser/{Id}','App\Http\Controllers\countryController@deleteRelacionCountryUser');
+
+
+Route::get('cuentacontable','App\Http\Controllers\cuentaContableController@getCuentaContable');
+Route::get('cuentacontable/{cuentaContable}','App\Http\Controllers\cuentaContableController@getCuentaContableByCuenta');
+Route::post('cuentacontable','App\Http\Controllers\cuentaContableController@postCuentaContable');

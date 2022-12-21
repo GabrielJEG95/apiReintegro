@@ -19,8 +19,10 @@ class aprobacionPDFController extends Controller
     public function createPDF(Request $request)
     {
         $IdSol = $request["IdSolicitud"];
+        $paises = $request["Pais"];
+
         $header = array('Concepto','Fecha','Documento','Beneficiario','Monto','Centro de Costo','Cuenta');
-        $solicitud = solReintegroService::obtenerSolicitudId($IdSol,0);
+        $solicitud = solReintegroService::obtenerSolicitudId($IdSol,0,$paises);
         $detalles = solReintegroService::listarDetalleSolicitudById($IdSol);
         $sumatoria = 0;
 
