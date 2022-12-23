@@ -71,4 +71,16 @@ class countryService
         return true;
     }
 
+    public function returnCountryLogin($user)
+    {
+        $country = self::listarPaisesByUser($user);
+        $data = [];
+
+        foreach ($country as $value) {
+            array_push($data, $value->IdPais);
+        }
+
+        return \implode(",",$data);
+    }
+
 }

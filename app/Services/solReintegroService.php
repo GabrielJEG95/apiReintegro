@@ -102,6 +102,40 @@ class solReintegroService
         return $solicitudes;
     }
 
+    public function listarSolicitudesByBeneficiario($perPage,$paises,$beneficiario)
+    {
+        $country = explode(",",$paises);
+
+
+        $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
+        'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+        'fnica.reiSolicitudReintegroDePago.USUARIO')
+        ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
+        ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+        ->where('fnica.reiSolicitudReintegroDePago.Beneficiario','like','%'.$beneficiario.'%')
+        ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
+        ->paginate($perPage);
+
+        return $solicitudes;
+    }
+    public function listarSolicitudesByFechas($perPage,$paises,$fechas)
+    {
+        $country = explode(",",$paises);
+        $inicio = $fechas["inicio"];
+        $fin = $fechas["fin"];
+
+        $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
+        'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+        'fnica.reiSolicitudReintegroDePago.USUARIO')
+        ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
+        ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+        ->whereBetween('fnica.reiSolicitudReintegroDePago.FechaSolicitud',[$inicio,$fin])
+        ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
+        ->paginate($perPage);
+
+        return $solicitudes;
+    }
+
     // filtrar solicitud por ID, retorna un unico registro
     public function obtenerSolicitudId($IdSolicitud, $IdRole,$paises)
     {

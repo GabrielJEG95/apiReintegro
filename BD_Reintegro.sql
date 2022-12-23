@@ -9,6 +9,7 @@ select * from Paises;
 select * from relacionUserPais;
 select * from registroLog;
 select * from cuentaContableReintegro;
+select * from centroCostoReintegro;
 
 create table cuentaContableReintegro
 (
@@ -20,7 +21,22 @@ create table cuentaContableReintegro
 	status bit default 1
 );
 
-update cuentaContableReintegro
+create table centroCostoReintegro
+(
+    IdCentroCosto int primary key identity(1,1),
+    CentroCosto varchar(20),
+    Descripcion varchar(100),
+    Pais int,
+    status bit default 1,
+    fechaRegistro datetime default getdate(),
+    usuarioRegistro varchar(20),
+    foreign key (Pais) references Paises (IdPais)
+);
+
+insert into centroCostoReintegro (CentroCosto,Descripcion,Pais)
+select CENTRO_COSTO,DESCRIPCION,1 from fnica.CENTRO_COSTO;
+
+update centroCostoReintegro
 set usuarioRegistro='gespinoza'
 
 insert into cuentaContableReintegro (CuentaContable,Descripcion)

@@ -63,6 +63,26 @@ class solReintegroController extends Controller
         return \response()->json($solicitudes,200);
     }
 
+    public function getSolReintegroByBeneficiario(Request $request)
+    {
+        $perPage = $request["perPage"];
+        $paises = $request["Pais"];
+        $beneficiario = $request["beneficiario"];
+
+        $solicitudes = solReintegroService::listarSolicitudesByBeneficiario($perPage,$paises,$beneficiario);
+        return \response()->json($solicitudes,200);
+    }
+
+    public function getSolReintegroByFechas(Request $request)
+    {
+        $perPage = $request["perPage"];
+        $paises = $request["Pais"];
+        $fechas = array("inicio"=>$request["fechaInicio"],"fin"=>$request["fechaFin"]);
+
+        $solicitudes = solReintegroService::listarSolicitudesByFechas($perPage,$paises,$fechas);
+        return response()->json($solicitudes,200);
+    }
+
     public function postReintegro(Request $request)
     {
         $header = $request->header('Authorization');
