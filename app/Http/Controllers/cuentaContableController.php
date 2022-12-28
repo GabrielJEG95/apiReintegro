@@ -29,4 +29,26 @@ class cuentaContableController extends Controller
 
         return response()->json($cuenta,200);
     }
+
+    public function getRelacionCuentaUser(Request $request)
+    {
+        $perPage = $request["perPage"];
+
+        $cuenta = cuentaContableService::listarCuentaContableUser($perPage);
+
+        return response()->json($cuenta,200);
+    }
+    public function postRelacionCuentaUser(Request $request)
+    {
+        $result = cuentaContableService::createCuentaContableUser($request);
+
+        return response()->json($result,200);
+    }
+
+    public function deleteRelacioNCuetaUser($Id, Request $request)
+    {
+        $result = cuentaContableService::romoveCuentaContableUser($Id,$request);
+
+        return response()->json($result,200);
+    }
 }

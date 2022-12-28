@@ -1,3 +1,4 @@
+use prueba;
 select * from fnica.reiSolicitudReintegrodePago;
 select * from fnica.reiSolicitudReintegrodePagoDetalle;
 select * from fnica.reiEstadoSolicitud;

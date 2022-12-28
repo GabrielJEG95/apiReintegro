@@ -60,5 +60,8 @@ Route::delete('countrybyuser/{Id}','App\Http\Controllers\countryController@delet
 
 
 Route::get('cuentacontable','App\Http\Controllers\cuentaContableController@getCuentaContable');
+Route::get('cuentacontableuser','App\Http\Controllers\cuentaContableController@getRelacionCuentaUser');
 Route::get('cuentacontable/{cuentaContable}','App\Http\Controllers\cuentaContableController@getCuentaContableByCuenta');
 Route::post('cuentacontable','App\Http\Controllers\cuentaContableController@postCuentaContable');
+Route::post('cuentacontableuser','App\Http\Controllers\cuentaContableController@postRelacionCuentaUser');
+Route::delete('cuentacontableuser/{Id}','App\Http\Controllers\cuentaContableController@deleteRelacioNCuetaUser');
