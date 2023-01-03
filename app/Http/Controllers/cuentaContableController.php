@@ -51,4 +51,11 @@ class cuentaContableController extends Controller
 
         return response()->json($result,200);
     }
+
+    public function activateRelacionCuentaUser($Id, Request $request)
+    {
+        $result = cuentaContableService::reactivateCuentaUser($Id, $request);
+
+        return response()->json($result,200);
+    }
 }

@@ -14,7 +14,8 @@
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "mtownsend/xml-to-array": "^2.0"
+        "mtownsend/xml-to-array": "^2.0",
+        "phpmailer/phpmailer": "^6.7"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

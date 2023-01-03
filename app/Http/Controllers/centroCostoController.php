@@ -10,7 +10,9 @@ class centroCostoController extends Controller
     public function getCentroCosto(Request $request)
     {
         $perPage = $request["perPage"];
-        $centroCosto = centroCosto::paginate($perPage);
+        $pais = $request["pais"];
+
+        $centroCosto = centroCosto::where('Pais','=',$pais)->paginate($perPage);
 
         return \response()->json($centroCosto,200);
     }

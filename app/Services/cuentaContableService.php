@@ -12,7 +12,7 @@ class cuentaContableService
 {
     public function listarCuentaContable($perPage)
     {
-        $cuentaContable = cuentaContable::select('CuentaContable','Descripcion')->paginate($perPage);
+        $cuentaContable = cuentaContable::select('IdCuentaContable','CuentaContable','Descripcion')->paginate($perPage);
 
         return $cuentaContable;
     }
@@ -59,6 +59,9 @@ class cuentaContableService
 
     public function createCuentaContableUser($request)
     {
+        if(is_bool(self::validateDataRelation($request)) === false) {
+            return ["mensaje"=> "Campos incompletos, no se pudo completar el registro, favor revisar"];
+        }
         $usuario = $request["Users"];
         $cuenta = $request["IdCuentaContable"];
 
@@ -69,6 +72,16 @@ class cuentaContableService
         cuentaContableUser::create($request->all());
 
         return ["mensaje"=>"Registro creado con exito"];
+    }
+
+    private function validateDataRelation($request) {
+        $user = $request["Users"];
+        $cuenta = $request["IDCuentaContable"];
+
+        if($user === '' || $user === null) return false;
+        if($cuenta === 0 || $cuenta === null) return false;
+
+        return true;
     }
 
     public function romoveCuentaContableUser($Id, $request)
@@ -88,5 +101,12 @@ class cuentaContableService
         ->get();
 
         return $result;
+    }
+
+    public function reactivateCuentaUser($Id, $request)
+    {
+        cuentaContableUser::where('Id','=',$Id)->update(['status'=>1,'usuarioAnulacion'=>null,'fechaAnulacion'=>null]);
+
+        return ["mensaje"=>"Registro actualizado con exito"];
     }
 }

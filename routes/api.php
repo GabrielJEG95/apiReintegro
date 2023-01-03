@@ -43,6 +43,8 @@ Route::put('reintegroStatus/{IdSolicitud}','App\Http\Controllers\solReintegroCon
 Route::get('prorrateo','App\Http\Controllers\prorrateoController@getProrrateo');
 
 Route::get('person/{user}','App\Http\Controllers\userController@person');
+Route::get('user','App\Http\Controllers\userController@getUserByReintegro');
+Route::get('users','App\Http\Controllers\userController@getUsers');
 Route::put('user/{user}','App\Http\Controllers\userController@updatePassword');
 
 Route::get('status','App\Http\Controllers\statusSolController@getStatus');
@@ -65,3 +67,6 @@ Route::get('cuentacontable/{cuentaContable}','App\Http\Controllers\cuentaContabl
 Route::post('cuentacontable','App\Http\Controllers\cuentaContableController@postCuentaContable');
 Route::post('cuentacontableuser','App\Http\Controllers\cuentaContableController@postRelacionCuentaUser');
 Route::delete('cuentacontableuser/{Id}','App\Http\Controllers\cuentaContableController@deleteRelacioNCuetaUser');
+Route::put('cuentacontableuser/{Id}','App\Http\Controllers\cuentaContableController@activateRelacionCuentaUser');
+
+Route::get('email','App\Http\Controllers\emailController@sendEmail');
