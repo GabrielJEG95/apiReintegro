@@ -45,7 +45,7 @@ class solReintegroService
     {
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
                 'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-                'fnica.reiSolicitudReintegroDePago.USUARIO')
+                'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
                 ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
                 ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
                 ->paginate($perPage);
@@ -59,7 +59,7 @@ class solReintegroService
 
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
         'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-        'fnica.reiSolicitudReintegroDePago.USUARIO')
+        'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
         ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
         ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
         ->where('fnica.reiSolicitudReintegroDePago.USUARIO','=',$usuario)
@@ -76,7 +76,7 @@ class solReintegroService
 
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
         'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-        'fnica.reiSolicitudReintegroDePago.USUARIO')
+        'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
         ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
         ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
         ->where('fnica.reiSolicitudReintegroDePago.CodEstado','=',$status)
@@ -112,7 +112,7 @@ class solReintegroService
 
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
         'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-        'fnica.reiSolicitudReintegroDePago.USUARIO')
+        'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
         ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
         ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
         ->where('fnica.reiSolicitudReintegroDePago.Beneficiario','like','%'.$beneficiario.'%')
@@ -129,7 +129,7 @@ class solReintegroService
 
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
         'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-        'fnica.reiSolicitudReintegroDePago.USUARIO')
+        'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
         ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
         ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
         ->whereBetween('fnica.reiSolicitudReintegroDePago.FechaSolicitud',[$inicio,$fin])
@@ -149,7 +149,7 @@ class solReintegroService
 
             $solicitud = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
             'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-            'fnica.reiSolicitudReintegroDePago.USUARIO')
+            'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
             ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
             ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
             ->where('fnica.reiSolicitudReintegroDePago.IdSolicitud','=',$IdSolicitud)
@@ -159,7 +159,7 @@ class solReintegroService
         } else {
             $solicitud = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
             'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-            'fnica.reiSolicitudReintegroDePago.USUARIO')
+            'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
             ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
             ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
             ->where('fnica.reiSolicitudReintegroDePago.IdSolicitud','=',$IdSolicitud)
