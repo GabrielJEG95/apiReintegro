@@ -70,3 +70,4 @@ Route::delete('cuentacontableuser/{Id}','App\Http\Controllers\cuentaContableCont
 Route::put('cuentacontableuser/{Id}','App\Http\Controllers\cuentaContableController@activateRelacionCuentaUser');
 
 Route::get('email','App\Http\Controllers\emailController@sendEmail');
+Route::get('mail','App\Http\Controllers\emailController@email');

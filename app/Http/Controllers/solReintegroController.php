@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\solicitudReintegro;
 use App\Services\solReintegroService;
+use App\Services\emailService;
 use App\Providers\AppServiceProvider;
 
 class solReintegroController extends Controller
@@ -96,6 +97,10 @@ class solReintegroController extends Controller
         }
 
         $solicitud = solReintegroService::createSolicitud($request);
+
+        $usuario = $request["USUARIO"];
+        $Monto = $request["Monto"];
+
         return response()->json($solicitud,200);
     }
 

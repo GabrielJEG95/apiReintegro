@@ -17,4 +17,13 @@ class emailController extends Controller
 
         return response()->json($result,200);
     }
+
+    public function email(Request $request)
+    {
+        $usuario = $request["usuario"];
+        $monto = $request["monto"];
+        $result = emailService::enviarEmail($usuario,$monto);
+
+        return response()->json($result,200);
+    }
 }

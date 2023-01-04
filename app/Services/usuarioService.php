@@ -27,4 +27,12 @@ class usuarioService
         $data = globalusuario::select('USUARIO','DESCR','PASSWORD')->where('USUARIO','=',$user)->get();
         return $data;
     }
+
+    public function buscarUsuariobyUsername($user)
+    {
+        $user = globalusuario::select('email')->where('USUARIO','=',$user)
+        ->get();
+
+        return $user;
+    }
 }

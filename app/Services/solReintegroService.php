@@ -6,7 +6,10 @@ use App\Models\solicitudReintegro;
 use App\Models\solicitudReintegroDetalle;
 use App\Models\prorrateo;
 use App\Services\statusService;
+use App\Services\emailService;
+use App\Services\usuarioService;
 use Carbon\Carbon;
+use App\Jobs\emailWork;
 use DB;
 
 class solReintegroService
@@ -180,12 +183,24 @@ class solReintegroService
         $anulado=0;
         $flgAsientoGenerado=0;
 
+        $usuario = $request["USUARIO"];
+        $Monto = $request["Monto"];
+
         $items = $request["items"];
 
         $request->merge(['FECHAREGISTRO'=>$fechaRegistro,'FechaAsientoContable'=>null,'NumCheque'=>$NumCheque,'Asiento'=>$asiento,'FECHAUPDATE'=>$fechaUpt,
         'Anulada'=>$anulado,'flgAsientoGenerado'=>$flgAsientoGenerado,'IdSolicitud'=>$IdSolicitud,'FechaSolicitud'=>Carbon::now('America/Managua'),'Concepto'=>$items[0]["Concepto"]]);
 
         $solicitud = solicitudReintegro::create($request->all());
+
+        // job en segundo plano, ejecutara una vez que metodo retorne una response
+        $message = "Nueva Solicitud de Reintegro Ingresada por";
+        $email = "gespinoza@formunica.com";
+        $subject = "Nueva solicitud ingresada";
+
+        emailWork::dispatchAfterResponse($usuario,$Monto, $message,$email, $subject);
+
+        // return response
         return self::createDetalleSolicitud($items,$IdSolicitud);
     }
     // inserta los detalles de la solicitud creada
@@ -223,7 +238,7 @@ class solReintegroService
         $linea = $request["Linea"];
         $centroCosto = $request["centroCosto"];
         $sol = self::obtenerDetalleSolicitudId($IdSolicitud,$linea);
-        $solCabecera = self::obtenerSolicitudId($IdSolicitud);
+        $solCabecera = self::obtenerSolicitudId($IdSolicitud,0,"1,2,3,4,5,6,7,8,9");
 
         $montoSol = $solCabecera["Monto"];
         $montoLinea = $sol[0]["Monto"];
@@ -293,7 +308,8 @@ class solReintegroService
     //actualiza el estado de la solicitud y genera un asiento en caso de que el estado a cambiar sea el codigo "7" o "CON"
     public function updateStatusSolicitud($IdSolicitud, $request)
     {
-        $solicitud = self::obtenerSolicitudId($IdSolicitud,0);
+        $paises = "1,2,3,4,5,6,7,8,9";
+        $solicitud = self::obtenerSolicitudId($IdSolicitud,0,$paises);
         $statusSol = $solicitud[0]["CodEstado"];
         $estado = $request["status"];
         $respuesta = array();
@@ -317,6 +333,13 @@ class solReintegroService
             $respuesta = ["mensaje"=>"Esta solicitud ya ha sido cambiada de estado Pendiente/Inicializado, por lo cual no se puede actualizar al estado solicitado","Solicitud"=>$IdSolicitud];
         } else if ($estado === "FIN" || $estado === "5") {
             if($statusSol === "CON" || $statusSol === "7") {
+
+                $solCabecera = self::findSolicitudById($IdSolicitud);
+                $user = $solCabecera[0]["USUARIO"];
+                $email = usuarioService::buscarUsuariobyUsername($user);
+                $subject = "Solicitud Finalizada";
+                emailWork::dispatchAfterResponse('',$solCabecera[0]["Monto"],'Su solicitud de reintegro ha sido finalizada',$email[0]["email"],$subject);
+
                 solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)->update(['CodEstado'=>$estado]);
                 $respuesta = ["mensaje"=>"Se actualizo el estado de la solicitud a finalizado","Solicitud"=>$IdSolicitud];
             } else {
@@ -325,6 +348,9 @@ class solReintegroService
         } else if($estado === "3" || $estado === "ATE") {
             if($statusSol === "6" || $statusSol === "ANU") {
                 $respuesta = ["mensaje"=>"No se puede cambiar de estado una solicitud que ha sido rechazada/anulada","Solicitud"=>$IdSolicitud];
+            } else {
+                solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)->update(['CodEstado'=>$estado]);
+                $respuesta = ["mensaje"=>"Solicitud atendida con exito","Solicitud"=>$IdSolicitud];
             }
         } else {
             solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)->update(['CodEstado'=>$estado]);
@@ -390,6 +416,16 @@ class solReintegroService
 
         return DB::select("declare @AsientoOutput nvarchar(10) EXEC fnica.uspreiCreaAsientoASolicitud $IdSolicitud,'$fecha', $asiento OUTPUT select $asiento as asiento");
     }
+
+    private function findSolicitudById($Id)
+    {
+        $solicitud = solicitudReintegro::select('IdSolicitud','USUARIO','Monto')
+        ->where('IdSolicitud','=',$Id)->get();
+
+        return $solicitud;
+    }
+
+
 
 
 

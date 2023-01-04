@@ -1,8 +1,15 @@
 <?php
-class template {
-  static public function getTemplate($usuario) {
+
+namespace App\Http\Common;
+
+use Illuminate\Support\Facades\Storage;
+use File;
+
+class templateEmail {
+  public function getTemplate($usuario,$monto,$mensaje) {
     $fecha = date('Y-m-d H:i:s');
-    $logo = 'files/Logo.png';
+    $logo = public_path('\public\images\Logo.png');
+    $image = 'data:image/png;base64,'.base64_encode(\file_get_contents($logo));
     return $body = " <!doctype html>
      <html>
        <head>
@@ -119,9 +126,9 @@ class template {
                        <table role='presentation' border='0' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;' width='100%'>
                          <tr>
                            <td style='font-family: sans-serif; font-size: 14px; vertical-align: top;' valign='top'>
-                            <img src='".$logo."' width='295' height='105'>
-                             <p style='font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;'>FORMUNICA</p>
-                             <p style='font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;'>Nuevo Pedido Ingresado por ".$usuario." a las ".$fecha."</p>
+                            <img src='".$image."'; width='285'; height='95';>
+                             <p style='font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;'><strong>FORMUNICA</strong></p>
+                             <p style='font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;'>".$mensaje." <strong>".$usuario."</strong> a las ".$fecha." por un valor de ".$monto.".</p>
                              <table role='presentation' border='0' cellpadding='0' cellspacing='0' class='btn btn-primary' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; box-sizing: border-box; width: 100%;' width='100%'>
                                <tbody>
                                  <tr>
@@ -129,7 +136,7 @@ class template {
                                      <table role='presentation' border='0' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;'>
                                        <tbody>
                                          <tr>
-                                           <td style='font-family: sans-serif; font-size: 14px; vertical-align: top; border-radius: 5px; text-align: center; background-color: #3498db;' valign='top' align='center' bgcolor='#3498db'> <a href='http://10.10.0.35:8082/pedidos' target='_blank' style='border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #3498db; border-color: #3498db; color: #ffffff;'>Ver Pedidos</a> </td>
+                                           <td style='font-family: sans-serif; font-size: 14px; vertical-align: top; border-radius: 5px; text-align: center; background-color: #3498db;' valign='top' align='center' bgcolor='#3498db'> <a href='http://10.10.0.35:8001/reintegro' target='_blank' style='border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #3498db; border-color: #3498db; color: #ffffff;'>Ir a Solicitudes</a> </td>
                                          </tr>
                                        </tbody>
                                      </table>
@@ -154,7 +161,7 @@ class template {
                    <table role='presentation' border='0' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;' width='100%'>
                      <tr>
                        <td class='content-block' style='font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; color: #999999; font-size: 12px; text-align: center;' valign='top' align='center'>
-                         <span class='apple-link' style='color: #999999; font-size: 12px; text-align: center;'>Tomador de Pedidos de Honduras</span>
+                         <span class='apple-link' style='color: #999999; font-size: 12px; text-align: center;'>Sistema de Reintegro</span>
 
                        </td>
                      </tr>
