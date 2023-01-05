@@ -1,9 +1,9 @@
 use prueba;
-select * from fnica.reiSolicitudReintegrodePago;
+select top 10 * from fnica.reiSolicitudReintegrodePago order by FECHAREGISTRO desc;
 select * from fnica.reiSolicitudReintegrodePagoDetalle;
 select * from fnica.reiEstadoSolicitud;
 select * from fnica.reiTipoEmisionPago;
-select * from fnica.globalusuario;
+select * from fnica.globalusuario where USUARIO ='gespinoza';
 select * from fnica.CENTRO_COSTO;
 select * from CatConceptoReintegro;
 select * from Paises;
@@ -11,6 +11,31 @@ select * from relacionUserPais;
 select * from registroLog;
 select * from cuentaContableReintegro;
 select * from centroCostoReintegro;
+select * from relacioncuentaContableUser;
+select * from banco
+
+select * from fnica.globalusuario where USUARIO = 'fpicado'
+
+update fnica.globalUSUARIO
+set email = 'gespinoza@formunica.com'
+where USUARIO = 'gespinoza';
+
+use exactus
+
+alter table fnica.reiSolicitudReintegrodePago add Banco int;
+
+insert into banco (Banco,Pais,UsuarioRegistro) values ('Lafise Bancentro',1,'gespinoza'),('Banpro',1,'gespinoza'),('Ficohsa',1,'gespinoza'),('Avanz',1,'gespinoza')
+
+create table banco
+(
+    IdBanco int primary key identity(1,1),
+    Banco varchar(50),
+    Pais int,
+    status bit default 1,
+    UsuarioRegistro varchar(20),
+    FechaRegistro datetime default getdate(),
+    foreign key (Pais) references Paises(IdPais)
+);
 
 create table cuentaContableReintegro
 (
@@ -33,6 +58,15 @@ create table centroCostoReintegro
     usuarioRegistro varchar(20),
     foreign key (Pais) references Paises (IdPais)
 );
+
+create trigger Insert_CentroCosto on fnica.CENTRO_COSTO
+for insert
+as
+begin
+    insert into centroCostoReintegro (CentroCosto,Descripcion,Pais,usuarioRegistro)
+    values (fnica.CENTRO_COSTO.CENTRO_COSTO,fnica.CENTRO_COSTO.DESCRIPCION,1,fnica.CENTRO_COSTO.CreatedBy)
+end
+go
 
 insert into centroCostoReintegro (CentroCosto,Descripcion,Pais)
 select CENTRO_COSTO,DESCRIPCION,1 from fnica.CENTRO_COSTO;
@@ -138,3 +172,13 @@ values
 ('5-02-01-001-130',	'Fletes Agricultura Protegida'),
 ('5-02-01-003-129',	'COMBUSTIBLES Y LUBRICANTES (TALLER)'),
 ('5-02-01-001-133',	'Servicios Generales')
+
+
+select distinct(a.USUARIO)
+from fnica.secusuariorole a
+join fnica.globalusuario b
+on a.USUARIO = b.USUARIO
+where a.IDMODULO=1500 and b.ACTIVO=1
+
+select *
+from fspy.formuSpy

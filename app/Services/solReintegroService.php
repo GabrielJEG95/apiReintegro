@@ -28,14 +28,22 @@ class solReintegroService
         $usuario = $request["user"];
         $estado = $request["status"];
         $paises = $request["Pais"];
+        $option = $request["option"];
         $solicitudes = '';
 
-        if($usuario !== null) {
-            $solicitudes = self::listarSolicitudesByUser($usuario,$per_page,$paises);
-        } else if($estado){
-            $solicitudes = self::listarSolicitudesByStatus($estado,$per_page,$paises);
-        } else {
-            $solicitudes = self::listarAllSolicitudes($per_page);
+        switch ($option) {
+            case 1:
+                $solicitudes = self::listarSolicitudesByUser($usuario,$per_page,$paises);
+                break;
+            case 2:
+                $solicitudes = self::listarSolicitudesByStatus($estado,$per_page,$paises);
+                break;
+            case 3:
+                $solicitudes = self::listarAllSolicitudes($per_page);
+                break;
+            default:
+                # code...
+                break;
         }
 
         return $solicitudes;
@@ -44,10 +52,11 @@ class solReintegroService
     public function listarAllSolicitudes($perPage)
     {
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
-                'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-                'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
+                'Concepto','CUENTA_BANCO','NumCheque','fnica.reiSolicitudReintegroDePago.FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+                'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento','banco.Banco')
                 ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
                 ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+                ->leftjoin('banco','fnica.reiSolicitudReintegroDePago.Banco','=','banco.IdBanco')
                 ->paginate($perPage);
 
         return $solicitudes;
@@ -58,10 +67,11 @@ class solReintegroService
         $country = explode(",",$paises);
 
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
-        'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-        'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
+        'Concepto','CUENTA_BANCO','NumCheque','fnica.reiSolicitudReintegroDePago.FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+        'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento','banco.Banco')
         ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
         ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+        ->leftjoin('banco','fnica.reiSolicitudReintegroDePago.Banco','=','banco.IdBanco')
         ->where('fnica.reiSolicitudReintegroDePago.USUARIO','=',$usuario)
         //->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
         ->paginate($perPage);
@@ -75,10 +85,11 @@ class solReintegroService
         $country = explode(",",$paises);
 
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
-        'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-        'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
+        'Concepto','CUENTA_BANCO','NumCheque','fnica.reiSolicitudReintegroDePago.FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+        'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento','banco.Banco')
         ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
         ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+        ->leftjoin('banco','fnica.reiSolicitudReintegroDePago.Banco','=','banco.IdBanco')
         ->where('fnica.reiSolicitudReintegroDePago.CodEstado','=',$status)
         ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
         ->paginate($perPage);
@@ -94,10 +105,11 @@ class solReintegroService
 
 
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
-        'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-        'fnica.reiSolicitudReintegroDePago.USUARIO')
+        'Concepto','CUENTA_BANCO','NumCheque','fnica.reiSolicitudReintegroDePago.FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+        'fnica.reiSolicitudReintegroDePago.USUARIO','banco.Banco')
         ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
         ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+        ->leftjoin('banco','fnica.reiSolicitudReintegroDePago.Banco','=','banco.IdBanco')
         ->whereIn('fnica.reiSolicitudReintegroDePago.CodEstado',$estados)
         ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
         ->paginate($perPage);
@@ -111,10 +123,11 @@ class solReintegroService
 
 
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
-        'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-        'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
+        'Concepto','CUENTA_BANCO','NumCheque','fnica.reiSolicitudReintegroDePago.FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+        'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento','banco.Banco')
         ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
         ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+        ->leftjoin('banco','fnica.reiSolicitudReintegroDePago.Banco','=','banco.IdBanco')
         ->where('fnica.reiSolicitudReintegroDePago.Beneficiario','like','%'.$beneficiario.'%')
         ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
         ->paginate($perPage);
@@ -128,10 +141,11 @@ class solReintegroService
         $fin = $fechas["fin"];
 
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
-        'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-        'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
+        'Concepto','CUENTA_BANCO','NumCheque','fnica.reiSolicitudReintegroDePago.FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+        'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento','banco.Banco')
         ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
         ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+        ->leftjoin('banco','fnica.reiSolicitudReintegroDePago.Banco','=','banco.IdBanco')
         ->whereBetween('fnica.reiSolicitudReintegroDePago.FechaSolicitud',[$inicio,$fin])
         ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
         ->paginate($perPage);
@@ -148,20 +162,22 @@ class solReintegroService
             $estados = statusService::statusByRole($IdRole);
 
             $solicitud = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
-            'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-            'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
+            'Concepto','CUENTA_BANCO','NumCheque','fnica.reiSolicitudReintegroDePago.FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+            'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento','banco.Banco')
             ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
             ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+            ->leftjoin('banco','fnica.reiSolicitudReintegroDePago.Banco','=','banco.IdBanco')
             ->where('fnica.reiSolicitudReintegroDePago.IdSolicitud','=',$IdSolicitud)
             ->whereIn('fnica.reiSolicitudReintegroDePago.CodEstado',$estados)
             ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
             ->paginate(10);
         } else {
             $solicitud = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
-            'Concepto','CUENTA_BANCO','NumCheque','FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
-            'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento')
+            'Concepto','CUENTA_BANCO','NumCheque','fnica.reiSolicitudReintegroDePago.FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
+            'fnica.reiSolicitudReintegroDePago.USUARIO','fnica.reiSolicitudReintegroDePago.Asiento','banco.Banco')
             ->join('fnica.reiTipoEmisionPago','fnica.reiSolicitudReintegroDePago.TipoPago','=','fnica.reiTipoEmisionPago.TipoPago')
             ->join('fnica.reiEstadoSolicitud','fnica.reiSolicitudReintegroDePago.CodEstado','=','fnica.reiEstadoSolicitud.CodEstado')
+            ->leftjoin('banco','fnica.reiSolicitudReintegroDePago.Banco','=','banco.IdBanco')
             ->where('fnica.reiSolicitudReintegroDePago.IdSolicitud','=',$IdSolicitud)
             ->whereIn('fnica.reiSolicitudReintegroDePago.Pais',$country)
             ->paginate(10);
@@ -332,7 +348,7 @@ class solReintegroService
         } else if($estado === "1" ||  $estado === "INI") {
             $respuesta = ["mensaje"=>"Esta solicitud ya ha sido cambiada de estado Pendiente/Inicializado, por lo cual no se puede actualizar al estado solicitado","Solicitud"=>$IdSolicitud];
         } else if ($estado === "FIN" || $estado === "5") {
-            if($statusSol === "CON" || $statusSol === "7") {
+            if($statusSol === "CON" || $statusSol === "7" || $statusSol === 'FIN' || $statusSol === '5') {
 
                 $solCabecera = self::findSolicitudById($IdSolicitud);
                 $user = $solCabecera[0]["USUARIO"];

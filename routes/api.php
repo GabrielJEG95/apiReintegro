@@ -71,3 +71,6 @@ Route::put('cuentacontableuser/{Id}','App\Http\Controllers\cuentaContableControl
 
 Route::get('email','App\Http\Controllers\emailController@sendEmail');
 Route::get('mail','App\Http\Controllers\emailController@email');
+
+Route::get('banco','App\Http\Controllers\bancoController@getBancos');
+Route::post('banco','App\Http\Controllers\bancoController@postBanco');
