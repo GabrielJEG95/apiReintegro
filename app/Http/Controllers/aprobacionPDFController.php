@@ -26,6 +26,12 @@ class aprobacionPDFController extends Controller
         $detalles = solReintegroService::listarDetalleSolicitudById($IdSol);
         $sumatoria = 0;
 
+        if($solicitud[0]["EsDolar"] === '0'){
+            $moneda = "Cordobas C$";
+        } else {
+            $moneda = "Dolares $";
+        }
+
         $this->fpdf->SetFont('Arial', 'B', 12);
         $this->fpdf->SetTitle('FORMUNICA-Solicitud de Pago');
 
@@ -53,7 +59,7 @@ class aprobacionPDFController extends Controller
         $this->fpdf->SetFont('Arial', 'B', 10);
         $this->fpdf->Text(10,55,"Por el valor de: ");
         $this->fpdf->SetFont('Arial', '', 10);
-        $this->fpdf->Text(60,55,\number_format($solicitud[0]["Monto"])." (Cordobas C$)");
+        $this->fpdf->Text(60,55,\number_format($solicitud[0]["Monto"])." (".$moneda.")");
 
         $this->fpdf->SetFont('Arial', 'B', 10);
         $this->fpdf->Text(10,60,"En Concepto de: ");
