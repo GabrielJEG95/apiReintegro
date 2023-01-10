@@ -25,6 +25,9 @@ Route::get('permisos/{usuario}', 'App\Http\Controllers\permisosController@getPer
 Route::get('concepto','App\Http\Controllers\conceptoReiController@getConcepto');
 
 Route::get('centrocosto','App\Http\Controllers\centroCostoController@getCentroCosto');
+Route::get('centrocostorei','App\Http\Controllers\centroCostoController@getCentroCostoReintegro');
+Route::get('centrocostouser','App\Http\Controllers\centroCostoController@getCentroCostoUser');
+Route::post('centrocostouser','App\Http\Controllers\centroCostoController@postCentroCostoUser');
 
 Route::get('tipopago','App\Http\Controllers\tipoPagoController@getTipoPago');
 

@@ -39,8 +39,9 @@ class solReintegroController extends Controller
         }
         $IdRole = $request["IdRole"];
         $paises = $request["Pais"];
+        $user = $request["user"];
 
-        $solicitud = solReintegroService::obtenerSolicitudId($IdSolicitud,$IdRole,$paises);
+        $solicitud = solReintegroService::obtenerSolicitudId($IdSolicitud,$IdRole,$paises,$user);
         return response()->json($solicitud,200);
     }
 
@@ -58,9 +59,10 @@ class solReintegroController extends Controller
 
         $IdRole = $request["IdRole"];
         $perPage = $request["perPage"];
+        $user = $request["user"];
         $paises = $request["Pais"];
 
-        $solicitudes = solReintegroService::listarSolicitudesByRol($IdRole,$perPage,$paises);
+        $solicitudes = solReintegroService::listarSolicitudesByRol($IdRole,$perPage,$paises,$user);
         return \response()->json($solicitudes,200);
     }
 
@@ -69,8 +71,9 @@ class solReintegroController extends Controller
         $perPage = $request["perPage"];
         $paises = $request["Pais"];
         $beneficiario = $request["beneficiario"];
+        $user = $request["user"];
 
-        $solicitudes = solReintegroService::listarSolicitudesByBeneficiario($perPage,$paises,$beneficiario);
+        $solicitudes = solReintegroService::listarSolicitudesByBeneficiario($perPage,$paises,$beneficiario,$user);
         return \response()->json($solicitudes,200);
     }
 
@@ -79,8 +82,9 @@ class solReintegroController extends Controller
         $perPage = $request["perPage"];
         $paises = $request["Pais"];
         $fechas = array("inicio"=>$request["fechaInicio"],"fin"=>$request["fechaFin"]);
+        $user = $request["user"];
 
-        $solicitudes = solReintegroService::listarSolicitudesByFechas($perPage,$paises,$fechas);
+        $solicitudes = solReintegroService::listarSolicitudesByFechas($perPage,$paises,$fechas,$user);
         return response()->json($solicitudes,200);
     }
 

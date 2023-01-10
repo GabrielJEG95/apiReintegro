@@ -57,6 +57,15 @@ class cuentaContableService
         return $cuentas;
     }
 
+    public function obtenerCuentaContableUser($user) {
+        $data = cuentaContableUser::select('cuentaContableReintegro.CuentaContable')
+        ->join('cuentaContableReintegro','relacioncuentaContableUser.IdCuentaContable','=','cuentaContableReintegro.IdCuentaContable')
+        ->where('relacioncuentaContableUser.Users','=',$user)
+        ->get();
+
+        return $data;
+    }
+
     public function createCuentaContableUser($request)
     {
         if(is_bool(self::validateDataRelation($request)) === false) {
@@ -109,4 +118,5 @@ class cuentaContableService
 
         return ["mensaje"=>"Registro actualizado con exito"];
     }
+
 }

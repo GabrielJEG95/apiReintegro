@@ -3,15 +3,15 @@ select top 10 * from fnica.reiSolicitudReintegrodePago order by FECHAREGISTRO de
 select * from fnica.reiSolicitudReintegrodePagoDetalle;
 select * from fnica.reiEstadoSolicitud;
 select * from fnica.reiTipoEmisionPago;
-select * from fnica.globalusuario where USUARIO ='gespinoza';
+select * from fnica.globalusuario where USUARIO ='rnorori';
 select * from fnica.CENTRO_COSTO;
 select * from CatConceptoReintegro;
 select * from Paises;
 select * from relacionUserPais;
 select * from registroLog;
 select * from cuentaContableReintegro;
-select * from centroCostoReintegro;
 select * from relacioncuentaContableUser;
+select * from relacionCentroCostoUser;
 select * from banco
 
 select * from fnica.globalusuario where USUARIO = 'fpicado'
@@ -25,6 +25,27 @@ use exactus
 alter table fnica.reiSolicitudReintegrodePago add Banco int;
 
 insert into banco (Banco,Pais,UsuarioRegistro) values ('Lafise Bancentro',1,'gespinoza'),('Banpro',1,'gespinoza'),('Ficohsa',1,'gespinoza'),('Avanz',1,'gespinoza')
+insert into banco (Banco,Pais,UsuarioRegistro) values ('Atlantida',2,'gespinoza'),('Lafise',2,'gespinoza'),('Ficohsa',2,'gespinoza')
+
+update banco
+set Banco = 'Lafise'
+where IdBanco = 7;
+
+create table relacionCentroCostoUser
+(
+    Id int primary key identity(1,1),
+    IdCentroCosto int,
+    Users varchar(20),
+    fechaCreacion datetime default getdate(),
+    usuarioCreacion varchar(20),
+    status bit default 1,
+    fechaAnulacion datetime,
+    usuarioAnulacion varchar(20),
+    foreign key (IdCentroCosto) references centroCostoReintegro(IdCentroCosto)
+);
+
+insert into relacionCentroCostoUser (IdCentroCosto,Users,usuarioCreacion)
+select IdCentroCosto,'rnorori','gespinoza' from centroCostoReintegro where CentroCosto not in ('01-05-00')
 
 create table banco
 (
@@ -182,3 +203,4 @@ where a.IDMODULO=1500 and b.ACTIVO=1
 
 select *
 from fspy.formuSpy
+

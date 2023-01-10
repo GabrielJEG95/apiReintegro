@@ -82,7 +82,7 @@ class aprobacionPDFController extends Controller
         $this->fpdf->SetLineWidth(.3);
         $this->fpdf->SetFont('','B');
 
-        $w = array(60,45,30,35,35,35,35);
+        $w = array(85,40,25,40,20,32,30);
         for($i=0;$i<count($header);$i++)
         {
             $this->fpdf->Cell($w[$i],7,$header[$i],1,0,'C',true);
@@ -91,7 +91,9 @@ class aprobacionPDFController extends Controller
         $fill = false;
 
         foreach ($detalles as $value) {
+            $this->fpdf->SetFont('','B',8);
             $this->fpdf->Cell($w[0],6,$value["Concepto"],'LR',0,'L',$fill);
+            $this->fpdf->SetFont('','B');
             $this->fpdf->Cell($w[1],6,$value["FechaFactura"],'LR',0,'L',$fill);
             $this->fpdf->Cell($w[2],6,$value["NumeroFactura"],'LR',0,'C',$fill);
             $this->fpdf->Cell($w[3],6,$value["NombreEstablecimiento_Persona"],'LR',0,'C',$fill);
