@@ -373,7 +373,8 @@ class solReintegroService
     public function updateStatusSolicitud($IdSolicitud, $request)
     {
         $paises = $request["Pais"]; //"1,2,3,4,5,6,7,8,9";
-        $solicitud = self::obtenerSolicitudId($IdSolicitud,0,$paises);
+        $user = $request["user"];
+        $solicitud = self::obtenerSolicitudId($IdSolicitud,0,$paises,$user);
         $statusSol = $solicitud[0]["CodEstado"];
         $estado = $request["status"];
         $respuesta = array();

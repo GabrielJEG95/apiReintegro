@@ -20,9 +20,10 @@ class aprobacionPDFController extends Controller
     {
         $IdSol = $request["IdSolicitud"];
         $paises = $request["Pais"];
+        $user = $request["user"];
 
         $header = array('Concepto','Fecha','Documento','Beneficiario','Monto','Centro de Costo','Cuenta');
-        $solicitud = solReintegroService::obtenerSolicitudId($IdSol,0,$paises);
+        $solicitud = solReintegroService::obtenerSolicitudId($IdSol,0,$paises,$user);
         $detalles = solReintegroService::listarDetalleSolicitudById($IdSol);
         $sumatoria = 0;
 

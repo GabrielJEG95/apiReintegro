@@ -19,21 +19,39 @@ class centroCostoService {
     public function listarCentroCostoUser($request) {
         $perPage = $request["perPage"];
         $user = $request["user"];
+        $role = $request["role"];
 
-        $data = centroCostoUser::select(
-            array(
-                DB::raw("case
-                when relacionCentroCostoUser.status = 1 then 'Activo'
-                else 'Inactivo'
-                end as status"),
-                'relacionCentroCostoUser.Id','relacionCentroCostoUser.Users',
-                'centroCostoReintegro.CentroCosto','centroCostoReintegro.Descripcion',
-                'relacionCentroCostoUser.fechaCreacion'
+        if($role === '1500') {
+            $data = centroCostoUser::select(
+                array(
+                    DB::raw("case
+                    when relacionCentroCostoUser.status = 1 then 'Activo'
+                    else 'Inactivo'
+                    end as status"),
+                    'relacionCentroCostoUser.Id','relacionCentroCostoUser.Users',
+                    'centroCostoReintegro.CentroCosto','centroCostoReintegro.Descripcion',
+                    'relacionCentroCostoUser.fechaCreacion'
+                    )
                 )
-            )
-        ->join('centroCostoReintegro','centroCostoReintegro.IdCentroCosto','=','relacionCentroCostoUser.IdCentroCosto')
-        ->where('relacionCentroCostoUser.Users','=',$user)
-        ->paginate($perPage);
+            ->join('centroCostoReintegro','centroCostoReintegro.IdCentroCosto','=','relacionCentroCostoUser.IdCentroCosto')
+            //->where('relacionCentroCostoUser.Users','=',$user)
+            ->paginate($perPage);
+        } else {
+            $data = centroCostoUser::select(
+                array(
+                    DB::raw("case
+                    when relacionCentroCostoUser.status = 1 then 'Activo'
+                    else 'Inactivo'
+                    end as status"),
+                    'relacionCentroCostoUser.Id','relacionCentroCostoUser.Users',
+                    'centroCostoReintegro.CentroCosto','centroCostoReintegro.Descripcion',
+                    'relacionCentroCostoUser.fechaCreacion'
+                    )
+                )
+            ->join('centroCostoReintegro','centroCostoReintegro.IdCentroCosto','=','relacionCentroCostoUser.IdCentroCosto')
+            ->where('relacionCentroCostoUser.Users','=',$user)
+            ->paginate($perPage);
+        }
 
         return $data;
     }
