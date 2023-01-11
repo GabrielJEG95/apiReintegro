@@ -16,7 +16,10 @@ class centroCostoService {
         return $data;
     }
 
-    public function listarCentroCostoUser($perPage) {
+    public function listarCentroCostoUser($request) {
+        $perPage = $request["perPage"];
+        $user = $request["user"];
+
         $data = centroCostoUser::select(
             array(
                 DB::raw("case
@@ -29,13 +32,21 @@ class centroCostoService {
                 )
             )
         ->join('centroCostoReintegro','centroCostoReintegro.IdCentroCosto','=','relacionCentroCostoUser.IdCentroCosto')
+        ->where('relacionCentroCostoUser.Users','=',$user)
         ->paginate($perPage);
 
         return $data;
     }
 
-    public function listarCentroCosto() {
-        $data = centroCosto::select('IdCentroCosto','CentroCosto','Descripcion')->where('status','=',1)->get();
+    public function listarCentroCosto($request) {
+        $pais = $request["Pais"];
+        $pais = explode(",",$pais);
+        //return $pais;
+
+        $data = centroCosto::select('IdCentroCosto','CentroCosto','Descripcion')
+        ->where('status','=',1)
+        ->whereIn('Pais',$pais)
+        ->get();
 
         return $data;
     }

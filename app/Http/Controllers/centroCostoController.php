@@ -18,9 +18,9 @@ class centroCostoController extends Controller
         return \response()->json($centroCosto,200);
     }
 
-    public function getCentroCostoReintegro()
+    public function getCentroCostoReintegro(Request $request)
     {
-        $result = centroCostoService::listarCentroCosto();
+        $result = centroCostoService::listarCentroCosto($request);
 
         return response()->json($result,200);
     }
@@ -32,8 +32,8 @@ class centroCostoController extends Controller
     }
 
     public function getCentroCostoUser(Request $request) {
-        $perPage = $request["perPage"];
-        $data = centroCostoService::listarCentroCostoUser($perPage);
+
+        $data = centroCostoService::listarCentroCostoUser($request);
 
         return response()->json($data,200);
     }

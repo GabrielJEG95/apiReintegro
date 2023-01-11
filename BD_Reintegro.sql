@@ -3,15 +3,16 @@ select top 10 * from fnica.reiSolicitudReintegrodePago order by FECHAREGISTRO de
 select * from fnica.reiSolicitudReintegrodePagoDetalle;
 select * from fnica.reiEstadoSolicitud;
 select * from fnica.reiTipoEmisionPago;
-select * from fnica.globalusuario where USUARIO ='rnorori';
+select * from fnica.globalusuario where USUARIO ='jbeteta';
 select * from fnica.CENTRO_COSTO;
 select * from CatConceptoReintegro;
 select * from Paises;
 select * from relacionUserPais;
 select * from registroLog;
 select * from cuentaContableReintegro;
+select * from centroCostoReintegro where CentroCosto = '00-00-00';
 select * from relacioncuentaContableUser;
-select * from relacionCentroCostoUser;
+select * from relacionCentroCostoUser where Users = 'ksegovia';
 select * from banco
 
 select * from fnica.globalusuario where USUARIO = 'fpicado'

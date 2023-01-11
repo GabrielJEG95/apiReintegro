@@ -39,7 +39,7 @@ class solReintegroService
                 $solicitudes = self::listarSolicitudesByUser($usuario,$per_page,$paises);
                 break;
             case 2:
-                $solicitudes = self::listarSolicitudesByStatus($estado,$per_page,$paises);
+                $solicitudes = self::listarSolicitudesByStatus($estado,$per_page,$paises,$usuario);
                 break;
             case 3:
                 $solicitudes = self::listarAllSolicitudes($per_page);
@@ -65,12 +65,12 @@ class solReintegroService
         return $solicitudes;
     }
     // retorna lista de solicitudes que cada usuario a hecho
-    public function listarSolicitudesByUser($usuario,$perPage,$paises,$user)
+    public function listarSolicitudesByUser($usuario,$perPage,$paises)
     {
         $country = explode(",",$paises);
 
-        $centros = centroCostoService::centroCostoUser($user);
-        $stringCentros = self::retornaCentrosString($centros);
+        //$centros = centroCostoService::centroCostoUser($user);
+        //$stringCentros = self::retornaCentrosString($centros);
 
         $solicitudes = solicitudReintegro::select('IdSolicitud','fnica.reiTipoEmisionPago.Descripcion','CENTRO_COSTO','FechaSolicitud','Monto','EsDolar','Beneficiario',
         'Concepto','CUENTA_BANCO','NumCheque','fnica.reiSolicitudReintegroDePago.FECHAREGISTRO','fnica.reiSolicitudReintegroDePago.CodEstado','fnica.reiEstadoSolicitud.Descripcion AS nameStatus',
@@ -357,7 +357,7 @@ class solReintegroService
                 $upt = solicitudReintegroDetalle::where('IdSolicitud','=',$IdSolicitud)
                 ->where('Linea','=',$value["Linea"])
                 ->update(['CENTRO_COSTO'=>$value["CENTRO_COSTO"],'Cuenta_Contable'=>$value["Cuenta_Contable"],
-                'NombreEstablecimiento_Persona'=>$value["NombreEstablecimiento_Persona"],'NumeroFactura'=>$value["NumeroFactura"]]);
+                'NombreEstablecimiento_Persona'=>$value["NombreEstablecimiento_Persona"],'NumeroFactura'=>$value["NumeroFactura"],'Monto'=>$value["Monto"]]);
 
 
             }
