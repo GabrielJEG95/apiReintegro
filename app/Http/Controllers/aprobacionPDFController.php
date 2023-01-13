@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Codedge\Fpdf\Fpdf\Fpdf;
 use App\Services\solReintegroService;
+use App\Services\centroCostoService;
 
 class aprobacionPDFController extends Controller
 {
@@ -25,6 +26,7 @@ class aprobacionPDFController extends Controller
         $header = array('Concepto','Fecha','Documento','Beneficiario','Monto','Centro de Costo','Cuenta');
         $solicitud = solReintegroService::obtenerSolicitudId($IdSol,0,$paises,$user);
         $detalles = solReintegroService::listarDetalleSolicitudById($IdSol);
+        $ceco = centroCostoService::obtenerCentroCosto($solicitud[0]["CENTRO_COSTO"]);
         $sumatoria = 0;
 
         if($solicitud[0]["EsDolar"] === '0'){
@@ -50,7 +52,7 @@ class aprobacionPDFController extends Controller
         $this->fpdf->SetFont('Arial', 'B', 10);
         $this->fpdf->Text(10,45,"Unidad Solicitante: ");
         $this->fpdf->SetFont('Arial', '', 10);
-        $this->fpdf->Text(60,45,$solicitud[0]["CENTRO_COSTO"]);
+        $this->fpdf->Text(60,45,$solicitud[0]["CENTRO_COSTO"]." ".$ceco[0]["Descripcion"]);
 
         $this->fpdf->SetFont('Arial', 'B', 10);
         $this->fpdf->Text(10,50,"A Favor de: ");
@@ -66,6 +68,18 @@ class aprobacionPDFController extends Controller
         $this->fpdf->Text(10,60,"En Concepto de: ");
         $this->fpdf->SetFont('Arial', '', 10);
         $this->fpdf->Text(60,60, \utf8_decode($solicitud[0]["Concepto"]));
+
+        if($solicitud[0]["TipoPago"] === "2") {
+            $this->fpdf->SetFont('Arial', 'B', 10);
+            $this->fpdf->Text(10,65,"Tipo de Pago: ");
+            $this->fpdf->SetFont('Arial', '', 10);
+            $this->fpdf->Text(60,65, \utf8_decode("Transferencia"));
+        } else if ($solicitud[0]["TipoPago"] === "1") {
+            $this->fpdf->SetFont('Arial', 'B', 10);
+            $this->fpdf->Text(10,65,"Tipo de Pago: ");
+            $this->fpdf->SetFont('Arial', '', 10);
+            $this->fpdf->Text(60,65, \utf8_decode("Cheque"));
+        }
 
         $this->fpdf->SetFont('Arial', 'B', 10);
         $this->fpdf->Text(150,40,\utf8_decode("Fecha de Emisión: "));
@@ -83,7 +97,7 @@ class aprobacionPDFController extends Controller
         $this->fpdf->SetLineWidth(.3);
         $this->fpdf->SetFont('','B');
 
-        $w = array(85,40,25,40,20,32,30);
+        $w = array(85,40,25,40,20,32,32);
         for($i=0;$i<count($header);$i++)
         {
             $this->fpdf->Cell($w[$i],7,$header[$i],1,0,'C',true);

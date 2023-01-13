@@ -76,4 +76,10 @@ class centroCostoService {
         return ["mensaje"=>"Registro creado con exito"];
     }
 
+    public function obtenerCentroCosto($ceco) {
+        $data = centroCosto::select('Descripcion')->where('CentroCosto','=',$ceco)->get();
+
+        return $data;
+    }
+
 }

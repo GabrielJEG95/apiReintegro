@@ -1,21 +1,54 @@
 use prueba;
+use EXACTUS
 select top 10 * from fnica.reiSolicitudReintegrodePago order by FECHAREGISTRO desc;
-select * from fnica.reiSolicitudReintegrodePagoDetalle;
+select top 10 * from [EXACTUS].fnica.reiSolicitudReintegrodePago order by FECHAREGISTRO desc;
+select * from fnica.reiSolicitudReintegrodePagoDetalle where IdSolicitud = '46729';
 select * from fnica.reiEstadoSolicitud;
 select * from fnica.reiTipoEmisionPago;
-select * from fnica.globalusuario where USUARIO ='jbeteta';
+select * from fnica.globalusuario where USUARIO ='rhanon';
 select * from fnica.CENTRO_COSTO;
 select * from CatConceptoReintegro;
 select * from Paises;
 select * from relacionUserPais;
 select * from registroLog;
 select * from cuentaContableReintegro;
-select * from centroCostoReintegro where CentroCosto = '00-00-00';
+select * from centroCostoReintegro where Pais is null CentroCosto = '02-01-11';
 select * from relacioncuentaContableUser;
 select * from relacionCentroCostoUser where Users = 'ksegovia';
 select * from banco
 
+delete from centroCostoReintegro where Pais is null
+
+select * from [EXACTUS].dbo.banco
+
+update fnica.reiSolicitudReintegroDePago
+set Pais=1
+
+alter table [EXACTUS].fnica.reiSolicitudReintegrodePago ADD Banco int foreign key references banco(Idbanco);
+
+insert into cuentaContableReintegro (CuentaContable,Descripcion,usuarioRegistro)
+select CuentaContable,Descripcion,usuarioRegistro from [prueba].dbo.[cuentaContableReintegro]
+
+insert into centroCostoReintegro (CentroCosto,Descripcion,usuarioRegistro,Pais)
+select CentroCosto,Descripcion,usuarioRegistro,Pais from [prueba].dbo.centroCostoReintegro
+
+insert into fnica.secUSUARIOROLE 
+values (1500,'rnorori',1500)
+
+select *
+from fnica.secUSUARIOROLE
+where USUARIO = 'rnorori'
+
+insert into relacionCentroCostoUser (IdCentroCosto,Users,usuarioCreacion)
+values (13,'jrodriguez','gespinoza')
+
 select * from fnica.globalusuario where USUARIO = 'fpicado'
+
+alter table cuentaContableReintegro add Pais int foreign key references Paises (IdPais)
+
+update cuentaContableReintegro
+set Pais = 1
+
 
 update fnica.globalUSUARIO
 set email = 'gespinoza@formunica.com'
