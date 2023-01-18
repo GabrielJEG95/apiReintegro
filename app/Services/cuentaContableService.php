@@ -119,4 +119,10 @@ class cuentaContableService
         return ["mensaje"=>"Registro actualizado con exito"];
     }
 
+    public function obtenerCuentaContableByCodigo($cuenta) {
+        $data = cuentaContable::select('IdCuentaContable','CuentaContable','Descripcion')->where('CuentaContable','=',$cuenta)->get();
+
+        return $data;
+    }
+
 }

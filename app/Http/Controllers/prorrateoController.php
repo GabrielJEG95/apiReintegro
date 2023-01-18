@@ -11,7 +11,7 @@ class prorrateoController extends Controller
     public function getProrrateo(Request $request)
     {
         $header = $request->header('Authorization');
-        
+
         if($header == null){
             return response()->json('unauthorized',401);
         }
@@ -22,8 +22,9 @@ class prorrateoController extends Controller
 
         $concepto = $request["concepto"];
         $monto = $request["monto"];
+        $pais = $request["pais"];
 
-        return solReintegroService::spProrrateo($concepto,$monto);
+        return solReintegroService::spProrrateo($concepto,$monto,$pais[0]);
 
     }
 }

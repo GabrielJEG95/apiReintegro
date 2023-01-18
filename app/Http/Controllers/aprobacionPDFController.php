@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Codedge\Fpdf\Fpdf\Fpdf;
 use App\Services\solReintegroService;
 use App\Services\centroCostoService;
+use App\Services\cuentaContableService;
 
 class aprobacionPDFController extends Controller
 {
@@ -23,7 +24,7 @@ class aprobacionPDFController extends Controller
         $paises = $request["Pais"];
         $user = $request["user"];
 
-        $header = array('Concepto','Fecha','Documento','Beneficiario','Monto','Centro de Costo','Cuenta');
+        $header = array('Concepto','Fecha','Doc','Beneficiario','Monto','Centro de Costo','Cuenta');
         $solicitud = solReintegroService::obtenerSolicitudId($IdSol,0,$paises,$user);
         $detalles = solReintegroService::listarDetalleSolicitudById($IdSol);
         $ceco = centroCostoService::obtenerCentroCosto($solicitud[0]["CENTRO_COSTO"]);
@@ -62,7 +63,7 @@ class aprobacionPDFController extends Controller
         $this->fpdf->SetFont('Arial', 'B', 10);
         $this->fpdf->Text(10,55,"Por el valor de: ");
         $this->fpdf->SetFont('Arial', '', 10);
-        $this->fpdf->Text(60,55,\number_format($solicitud[0]["Monto"])." (".$moneda.")");
+        $this->fpdf->Text(60,55,\number_format($solicitud[0]["Monto"],2)." (".$moneda.")");
 
         $this->fpdf->SetFont('Arial', 'B', 10);
         $this->fpdf->Text(10,60,"En Concepto de: ");
@@ -84,7 +85,7 @@ class aprobacionPDFController extends Controller
         $this->fpdf->SetFont('Arial', 'B', 10);
         $this->fpdf->Text(150,40,\utf8_decode("Fecha de Emisión: "));
         $this->fpdf->SetFont('Arial', '', 10);
-        $this->fpdf->Text(190,40,$solicitud[0]["FechaSolicitud"]);
+        $this->fpdf->Text(190,40,date("Y-m-d", \strtotime($solicitud[0]["FechaSolicitud"])));
 
         $this->fpdf->Ln();
         $this->fpdf->Ln();
@@ -97,7 +98,7 @@ class aprobacionPDFController extends Controller
         $this->fpdf->SetLineWidth(.3);
         $this->fpdf->SetFont('','B');
 
-        $w = array(85,40,25,40,20,32,32);
+        $w = array(72,20,15,40,18,47,65);
         for($i=0;$i<count($header);$i++)
         {
             $this->fpdf->Cell($w[$i],7,$header[$i],1,0,'C',true);
@@ -106,15 +107,19 @@ class aprobacionPDFController extends Controller
         $fill = false;
 
         foreach ($detalles as $value) {
+            $centroCo = centroCostoService::obtenerCentroCosto($value["CENTRO_COSTO"]);
+            $cuentaCon= cuentaContableService::obtenerCuentaContableByCodigo($value["Cuenta_Contable"]);
+
             $this->fpdf->SetFont('','B',8);
             $this->fpdf->Cell($w[0],6,$value["Concepto"],'LR',0,'L',$fill);
             $this->fpdf->SetFont('','B');
-            $this->fpdf->Cell($w[1],6,$value["FechaFactura"],'LR',0,'L',$fill);
+            $this->fpdf->Cell($w[1],6,date("Y-m-d",\strtotime($value["FechaFactura"])),'LR',0,'L',$fill);
             $this->fpdf->Cell($w[2],6,$value["NumeroFactura"],'LR',0,'C',$fill);
             $this->fpdf->Cell($w[3],6,$value["NombreEstablecimiento_Persona"],'LR',0,'C',$fill);
             $this->fpdf->Cell($w[4],6,$value["Monto"],'LR',0,'R',$fill);
-            $this->fpdf->Cell($w[5],6,$value["CENTRO_COSTO"],'LR',0,'C',$fill);
-            $this->fpdf->Cell($w[5],6,$value["Cuenta_Contable"],'LR',0,'C',$fill);
+            $this->fpdf->Cell($w[5],6,$value["CENTRO_COSTO"]." ".utf8_decode($centroCo[0]["Descripcion"]),'LR',0,'L',$fill);
+            $this->fpdf->SetFont('','B',8);
+            $this->fpdf->Cell($w[6],6,$value["Cuenta_Contable"]." ".utf8_decode($cuentaCon[0]["Descripcion"]),'LR',0,'L',$fill);
             $this->fpdf->Ln();
             $fill = !$fill;
             $sumatoria = $sumatoria+$value["Monto"];
@@ -134,7 +139,7 @@ class aprobacionPDFController extends Controller
         $this->fpdf->Text(150,185,"SUMATORIA ==>");
 
         $this->fpdf->SetFont('Arial', 'B', 10);
-        $this->fpdf->Text(200,185,\number_format($sumatoria));
+        $this->fpdf->Text(200,185,\number_format($sumatoria,2));
 
         $this->fpdf->SetY(-15);
         $this->fpdf->SetFont('Arial','I',8);

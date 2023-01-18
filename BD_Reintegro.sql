@@ -2,7 +2,7 @@ use prueba;
 use EXACTUS
 select top 10 * from fnica.reiSolicitudReintegrodePago order by FECHAREGISTRO desc;
 select top 10 * from [EXACTUS].fnica.reiSolicitudReintegrodePago order by FECHAREGISTRO desc;
-select * from fnica.reiSolicitudReintegrodePagoDetalle where IdSolicitud = '46729';
+select * from fnica.reiSolicitudReintegrodePagoDetalle where IdSolicitud = '47371';
 select * from fnica.reiEstadoSolicitud;
 select * from fnica.reiTipoEmisionPago;
 select * from fnica.globalusuario where USUARIO ='rhanon';
@@ -15,14 +15,29 @@ select * from cuentaContableReintegro;
 select * from centroCostoReintegro where Pais is null CentroCosto = '02-01-11';
 select * from relacioncuentaContableUser;
 select * from relacionCentroCostoUser where Users = 'ksegovia';
-select * from banco
+select * from banco;
+select * from cicloReintegro;
+select * from empCountReintegro;
+
+declare @monto decimal(10,2) = 1500, @concepto int = 1
+select CentroCosto,NoEmpleado, porcentaje, (@monto * porcentaje)/100 as monto
+from empCountReintegro
+where Concepto= @concepto;
+
+select sum(NoEmpleado) from empCountReintegro where Concepto=2;
+insert into cicloReintegro (Ciclo,usuarioRegistro) values ('2022-2023','gespinoza');
+
+insert into empCountReintegro(CentroCosto,NoEmpleado,porcentaje,Concepto,Ciclo,usuarioRegistro)
+values('01-03-09',2,11.11,2,1,'gespinoza');
+
 
 delete from centroCostoReintegro where Pais is null
 
 select * from [EXACTUS].dbo.banco
 
-update fnica.reiSolicitudReintegroDePago
-set Pais=1
+update fnica.reiSolicitudReintegrodePagoDetalle
+set Concepto='Compra de Articulos de Cafeteria'
+where IdSolicitud='47371'
 
 alter table [EXACTUS].fnica.reiSolicitudReintegrodePago ADD Banco int foreign key references banco(Idbanco);
 
@@ -64,6 +79,32 @@ insert into banco (Banco,Pais,UsuarioRegistro) values ('Atlantida',2,'gespinoza'
 update banco
 set Banco = 'Lafise'
 where IdBanco = 7;
+
+create table cicloReintegro
+(
+    IdCiclo int primary key identity(1,1),
+    Ciclo varchar(20),
+    status bit default 1,
+    fechaRegistro datetime default getdate(),
+    usuarioRegistro varchar(20),
+);
+
+create table empCountReintegro
+(
+    IdCount int primary key identity(1,1),
+    CentroCosto varchar(20),
+    NoEmpleado int,
+    porcentaje decimal(10,2),
+    Concepto int,
+    status bit default 1,
+    Ciclo int,
+    fechaRegistro datetime default getdate(),
+    fechaAnulacion datetime,
+    usuarioRegistro varchar(20),
+    foreign key (Concepto) references CatConceptoReintegro(IdConcepto),
+    foreign key(Ciclo) references cicloReintegro(IdCiclo)
+);
+
 
 create table relacionCentroCostoUser
 (

@@ -249,6 +249,7 @@ class solReintegroService
 
         $usuario = $request["USUARIO"];
         $Monto = $request["Monto"];
+        $concepto = $request["Concepto"];
 
         $items = $request["items"];
 
@@ -265,15 +266,17 @@ class solReintegroService
         emailWork::dispatchAfterResponse($usuario,$Monto, $message,$email, $subject);
 
         // return response
-        return self::createDetalleSolicitud($items,$IdSolicitud);
+        return self::createDetalleSolicitud($items,$IdSolicitud,$concepto);
     }
     // inserta los detalles de la solicitud creada
-    private function createDetalleSolicitud($items,$IdSolicitud)
+    private function createDetalleSolicitud($items,$IdSolicitud,$concepto)
     {
         try
         {
+
             foreach($items as $key => $value)
             {
+                $value["Concepto"]=$concepto;
                 $value["IdSolicitud"]=$IdSolicitud;
                 solicitudReintegroDetalle::create($value);
             }
@@ -287,9 +290,10 @@ class solReintegroService
         }
     }
     // ejecuta procedimiento almacenado que retorna n lineas en dependencia del concepto
-    public function spProrrateo($concepto,$monto)
+    public function spProrrateo($concepto,$monto,$pais)
     {
-        return DB::select("EXEC dbo.spReintegroConceptosProrrateo $concepto,$monto");
+        // return DB::select("EXEC dbo.spReintegroConceptosProrrateo $concepto,$monto");
+        return DB::select("EXEC dbo.SP_Prorrateo $monto,$concepto,$pais");
     }
     // retorna lista de detalles de una solicitud por el ID de la sol
     public function listarDetalleSolicitudById($IdSolicitud)
@@ -338,7 +342,22 @@ class solReintegroService
     {
         return $detalles = solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)->get();
     }
+    private function updateCabeceraSolicitud($IdSolicitud,$request)
+    {
+        try {
+            $CentroCosto = $request["CENTRO_COSTO"];
+            $beneficiario = $request["Beneficiario"];
+            $concepto = $request["Concepto"];
+            $tipoPago = $request["TipoPago"];
+            $monto = $request["Monto"];
 
+            solicitudReintegro::where('IdSolicitud','=',$IdSolicitud)
+            ->update(['Monto'=>$monto,'Concepto'=>$concepto,'Beneficiario'=>$beneficiario,'CENTRO_COSTO'=>$CentroCosto,'TipoPago'=>$tipoPago]);
+
+        } catch (\Throwable $th) {
+            return $th;
+        }
+    }
     public function updateDetalleSolicitud($IdSolicitud,$request)
     {
         try
@@ -350,6 +369,8 @@ class solReintegroService
             {
                 return ["mensaje"=>"Esta solicitud ya se encuentra en proceso. No se puede actualizar"];
             }
+
+            self::updateCabeceraSolicitud($IdSolicitud,$request);
 
             foreach ($items as $key => $value)
             {

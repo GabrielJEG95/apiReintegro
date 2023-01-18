@@ -14,7 +14,7 @@ class emailService
     public function sendEmail($mensaje,$usuario, $subject)
     {
         $fecha = carbon::now();
-        $response = Mail::to('gespinoza@formunica.com','Gabriel Espinoza')->queue(new notification($mensaje,$usuario,$subject,$fecha));
+        $response = Mail::to('rnorori@formunica.com','Roxana Norori')->queue(new notification($mensaje,$usuario,$subject,$fecha));
     }
     public function enviarEmail($usuario, $monto, $mensaje, $email,$subject)
     {
