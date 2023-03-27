@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 class solReintegroService
 {
     // retorna el ultimo ID insertado
-    private function lastId()
+    public function lastId()
     {
         return $lastId = intval(solicitudReintegro::max('IdSolicitud'))+1 ;
     }

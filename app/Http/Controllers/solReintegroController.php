@@ -195,4 +195,11 @@ class solReintegroController extends Controller
         return \response()->json($upt,200);
     }
 
+    public function getNumeroSolicitud()
+    {
+        $numero = solReintegroService::lastId();
+
+        return response()->json($numero,200);
+    }
+
 }

@@ -32,6 +32,7 @@ Route::post('centrocostouser','App\Http\Controllers\centroCostoController@postCe
 Route::get('tipopago','App\Http\Controllers\tipoPagoController@getTipoPago');
 
 Route::get('reintegro','App\Http\Controllers\solReintegroController@getSolReintegro');
+Route::get('numeroReintegro','App\Http\Controllers\solReintegroController@getNumeroSolicitud');
 Route::get('reintegrobyrol','App\Http\Controllers\solReintegroController@getSolReintegroByRol');
 Route::get('reintegrobybeneficiario','App\Http\Controllers\solReintegroController@getSolReintegroByBeneficiario');
 Route::get('reintegrobyfechas','App\Http\Controllers\solReintegroController@getSolReintegroByFechas');
