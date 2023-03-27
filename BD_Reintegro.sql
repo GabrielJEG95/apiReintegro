@@ -1,7 +1,7 @@
 use prueba;
 use EXACTUS
 select top 10 * from fnica.reiSolicitudReintegrodePago order by FECHAREGISTRO desc;
-select top 10 * from [EXACTUS].fnica.reiSolicitudReintegrodePago order by FECHAREGISTRO desc;
+select top 10 * from [EXACTUS].fnica.reiSolicitudReintegrodePago where IdSolicitud = '47375' order by FECHAREGISTRO desc;
 select * from fnica.reiSolicitudReintegrodePagoDetalle where IdSolicitud = '47371';
 select * from fnica.reiEstadoSolicitud;
 select * from fnica.reiTipoEmisionPago;
@@ -12,17 +12,28 @@ select * from Paises;
 select * from relacionUserPais;
 select * from registroLog;
 select * from cuentaContableReintegro;
-select * from centroCostoReintegro where Pais is null CentroCosto = '02-01-11';
+select * from centroCostoReintegro where CentroCosto = '02-03-04';
 select * from relacioncuentaContableUser;
 select * from relacionCentroCostoUser where Users = 'ksegovia';
 select * from banco;
 select * from cicloReintegro;
 select * from empCountReintegro;
 
-declare @monto decimal(10,2) = 1500, @concepto int = 1
-select CentroCosto,NoEmpleado, porcentaje, (@monto * porcentaje)/100 as monto
-from empCountReintegro
-where Concepto= @concepto;
+declare @monto decimal(10,2) = 1530.36, @concepto int = 1, @pais int = 1
+select b.IdConcepto,
+b.strDescripcion as strDescripcionConcepto,
+a.CentroCosto as strCeCo,
+c.Descripcion as strDescripcionCeco,
+NoEmpleado as intEmpleados,
+porcentaje,
+(@monto * porcentaje)/100 as decMontoPro,
+ROW_NUMBER() OVER(PARTITION BY b.IdConcepto ORDER BY c.CentroCosto ASC) as IdLinea
+from empCountReintegro a
+join CatConceptoReintegro b
+on a.Concepto = b.IdConcepto
+join centroCostoReintegro c
+on a.CentroCosto = c.CentroCosto
+where Concepto= @concepto and c.Pais = @pais;
 
 select sum(NoEmpleado) from empCountReintegro where Concepto=2;
 insert into cicloReintegro (Ciclo,usuarioRegistro) values ('2022-2023','gespinoza');
@@ -57,7 +68,7 @@ where USUARIO = 'rnorori'
 insert into relacionCentroCostoUser (IdCentroCosto,Users,usuarioCreacion)
 values (13,'jrodriguez','gespinoza')
 
-select * from fnica.globalusuario where USUARIO = 'fpicado'
+select * from fnica.globalusuario where USUARIO = 'rlopezn'
 
 alter table cuentaContableReintegro add Pais int foreign key references Paises (IdPais)
 
